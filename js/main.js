@@ -26,6 +26,8 @@ import * as analysis from "./ui/analysis.js";
 import * as duel from "./ui/duel.js";
 import * as actions from "./ui/actions.js";
 import * as touchControls from "./input/touch-controls.js";
+import * as protect from "./storage/protect.js";
+import * as pwa from "./pwa/register.js";
 
 export function loop(){requestAnimationFrame(loop);faTick();bvTick();
  if(app.page==="sim"){paTick();if(app.st==="training"){const n=+$("ps").value;for(let i=0;i<n&&app.st==="training";i++)trainStep()}
@@ -60,4 +62,6 @@ actions.init();
 editor.init2();
 // ===== Ab hier: Ergänzungen, die es in der Originaldatei nicht gab =====
 touchControls.init();
+protect.init();
+pwa.init();
 requestAnimationFrame(loop);

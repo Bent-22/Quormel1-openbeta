@@ -147,3 +147,9 @@ body.touch #race.on #tc{display:block}body.touch #drvT{display:block;margin-top:
 }
 /* Sehr schmale Smartphones: Tasten etwas kleiner, damit beide Gruppen nebeneinander passen */
 @media(max-width:380px){.tcg{gap:6px}.tcg button{width:66px;height:66px}#tcL{left:max(8px,env(safe-area-inset-left))}#tcR{right:max(8px,env(safe-area-inset-right))}}
+
+/* ================= Phase 4: Installierbare Web-App ================= */
+#pwa{display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 0 12px;max-width:560px}
+#pwa small{color:var(--m)}#pwa [hidden]{display:none}#pwa small:empty{display:none}
+#bInst{width:260px}
+#pwaUpd{background:var(--p);border:1px solid var(--a);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:8px}

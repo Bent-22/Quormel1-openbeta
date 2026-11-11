@@ -34,7 +34,11 @@ export function loadSave(dIn,imp,force){const d=dIn||readSave();
 export function exportSave(){persist(); // persist() schreibt nur, wenn die aktuelle Trainingseinheit den Speicher besitzt – sonst wird der gespeicherte Stand unverändert exportiert
  const raw=localStorage.getItem("q1save"),d=readSave(raw);if(!d){toast("Noch kein gültiger Speicherstand zum Exportieren vorhanden.");return}
  const slug=d.tn.toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""),dt=new Date(),z=n=>String(n).padStart(2,"0");
- const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([raw],{type:"application/json"}));a.download=`quormel1_${slug||"strecke"}_${d.epN}ep_${dt.getFullYear()}-${z(dt.getMonth()+1)}-${z(dt.getDate())}.json`;
+ const name=`quormel1_${slug||"strecke"}_${d.epN}ep_${dt.getFullYear()}-${z(dt.getMonth()+1)}-${z(dt.getDate())}.json`;
+ // Als App installiert auf iPhone/iPad: Downloads sind dort nicht zuverlässig – die Datei wird über den Teilen-Dialog gesichert (z. B. „In Dateien sichern“).
+ if(navigator.standalone===true&&navigator.canShare){const f=new File([raw],name,{type:"application/json"});
+  if(navigator.canShare({files:[f]})){navigator.share({files:[f]}).then(()=>toast("Speicherstand exportiert: "+name)).catch(()=>toast("Export abgebrochen – dein Speicherstand bleibt unverändert."));return}}
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([raw],{type:"application/json"}));a.download=name;
  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("Speicherstand exportiert: "+a.download)}
 export const saveInfo=d=>`${d.tn} · ${d.epN} Episoden · ${d.ok} erfolgreich · beste Fahrt ${d.best?(d.best.steps/60).toFixed(2)+" s":"–"}`;
 export function doImport(){const d=app.IMP;app.IMP=null;if(!d)return;if(app.st==="training")app.st="paused";

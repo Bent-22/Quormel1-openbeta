@@ -1,8 +1,10 @@
 # QUORMEL 1 – Modernisierungsplan (Phase 1: Analyse und Architektur)
 
-Stand: 11.11.2026 · Branch: `feat/quormel-cross-platform-pwa` · Status: Phase 1 abgeschlossen, Phase 2 wartet auf Freigabe
+Stand: 11.11.2026 · Branch: `feat/quormel-cross-platform-pwa` · Status: Phase 1 und 2 abgeschlossen
 
-Dieses Dokument ist die verbindliche Grundlage für die Phasen 2 bis 5. In Phase 1 wurde kein Anwendungscode verändert.
+Dieses Dokument ist die Grundlage für die Phasen 2 bis 5 und gibt den Stand der Analyse aus Phase 1 wieder. In Phase 1 wurde kein Anwendungscode verändert.
+
+> **Nachtrag Phase 2:** Das Repository ist absichtlich leer gestartet und der Schreibzugriff besteht inzwischen. Die Umsetzung weicht in einigen Punkten vom Plan ab (kein Vite/TypeScript, kein IndexedDB). Was tatsächlich gebaut wurde und warum, steht in [architecture.md](architecture.md) und [changes.md](changes.md).
 
 ---
 

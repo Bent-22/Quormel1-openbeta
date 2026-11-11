@@ -1,10 +1,11 @@
 // QUORMEL 1 – First-Person-Ansicht: vorberechnete Streckengeometrie und Zeichnen der 3D-Szene.
 import {app} from "../state.js";
 import {H,W} from "../core/constants.js";
+import {hd} from "./hidpi.js";
 
 export function drawFPV(cv,px,py,a){ // zeichnet nur die Straße vor dem Auto; passierte Abschnitte werden gar nicht mehr verarbeitet
- if(cv.width!==innerWidth||cv.height!==innerHeight){cv.width=innerWidth;cv.height=innerHeight}
- const x=cv.getContext("2d"),w=cv.width,h=cv.height,hz=h*.4,f=h*.85,ch=9,cx=px+Math.cos(a)*5,cy=py+Math.sin(a)*5,p=app.T.p,n=p.length,hw=app.T.w/2;
+ const x=hd(cv,innerWidth,innerHeight),w=innerWidth,h=innerHeight, // gezeichnet wird in CSS-Pixeln; hd() sorgt für die höhere Auflösung
+ hz=h*.4,f=h*.85,ch=9,cx=px+Math.cos(a)*5,cy=py+Math.sin(a)*5,p=app.T.p,n=p.length,hw=app.T.w/2;
  const g=x.createLinearGradient(0,0,0,hz);g.addColorStop(0,"#3f83d0");g.addColorStop(1,"#cfe6f7");x.fillStyle=g;x.fillRect(0,0,w,hz);const gg=x.createLinearGradient(0,hz,0,h);gg.addColorStop(0,"#b3d1bf");gg.addColorStop(.25,"#3f7d46");gg.addColorStop(1,"#2d6a35");x.fillStyle=gg;x.fillRect(0,hz,w,h-hz);
  const G=app.T.geo||(app.T.geo=buildGeo()),NZ=1.5,items=[],ca=Math.cos(a),sa=Math.sin(a),cs=new Array(n); // Geometrie ist vorberechnet; pro Bild werden nur sichtbare Teile gezeichnet
  const cm=(X,Y,Hh)=>[-(X-cx)*sa+(Y-cy)*ca,(X-cx)*ca+(Y-cy)*sa,Hh||0];

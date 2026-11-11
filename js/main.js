@@ -25,6 +25,7 @@ import * as lab from "./ui/lab.js";
 import * as analysis from "./ui/analysis.js";
 import * as duel from "./ui/duel.js";
 import * as actions from "./ui/actions.js";
+import * as touchControls from "./input/touch-controls.js";
 
 export function loop(){requestAnimationFrame(loop);faTick();bvTick();
  if(app.page==="sim"){paTick();if(app.st==="training"){const n=+$("ps").value;for(let i=0;i<n&&app.st==="training";i++)trainStep()}
@@ -57,4 +58,6 @@ duel.init();
 replay.init2();
 actions.init();
 editor.init2();
+// ===== Ab hier: Ergänzungen, die es in der Originaldatei nicht gab =====
+touchControls.init();
 requestAnimationFrame(loop);

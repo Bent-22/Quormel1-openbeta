@@ -4,8 +4,9 @@ import {H,W} from "../core/constants.js";
 import {PRE,cat,rs,setTrack} from "../core/track.js";
 import {edOpen} from "./editor.js";
 import {openSim} from "./sim.js";
+import {hd} from "../render/hidpi.js";
 
-export function preview(cv,pts,w){const x=cv.getContext("2d");x.clearRect(0,0,cv.width,cv.height);x.lineCap=x.lineJoin="round";x.strokeStyle="#7a8296";x.lineWidth=w/3;x.beginPath();pts.forEach((q,i)=>i?x.lineTo(q.x*cv.width/W,q.y*cv.height/H):x.moveTo(q.x*cv.width/W,q.y*cv.height/H));x.stroke()}
+export function preview(cv,pts,w){const x=hd(cv),cw=cv._lw,ch=cv._lh;x.clearRect(0,0,cw,ch);x.lineCap=x.lineJoin="round";x.strokeStyle="#7a8296";x.lineWidth=w/3;x.beginPath();pts.forEach((q,i)=>i?x.lineTo(q.x*cw/W,q.y*ch/H):x.moveTo(q.x*cw/W,q.y*ch/H));x.stroke()}
 
 // Initialisierung – wird von main.js in der Reihenfolge der Originaldatei aufgerufen
 export function init(){

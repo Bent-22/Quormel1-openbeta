@@ -5,11 +5,15 @@ import {H,V,W} from "../core/constants.js";
 import {road} from "../core/track.js";
 import {drawCar,drawIdeal} from "../render/sim-view.js";
 import {pbGet,pbKey,pbLegacy} from "../storage/records.js";
+import {pxScale} from "../render/hidpi.js";
+import {raceInsets} from "../input/touch-controls.js";
 
 // ===== P03: Tastenzustand zurücksetzen, wenn das Fenster den Fokus verliert =====
 export function clearKeys(){for(const k in app.keys)app.keys[k]=false}
 // ===== Rennen =====
-export function raceTick(){const cv=$("rc2");if(cv.width!==innerWidth||cv.height!==innerHeight){cv.width=innerWidth;cv.height=innerHeight}const x=cv.getContext("2d"),sc=Math.min(cv.width/W,cv.height/H);x.setTransform(1,0,0,1,0,0);x.fillStyle="#1b2a1f";x.fillRect(0,0,cv.width,cv.height);x.setTransform(sc,0,0,sc,(cv.width-W*sc)/2,(cv.height-H*sc)/2);x.drawImage(app.roadC,0,0);if(app.showIdeal)drawIdeal(x);x.fillStyle="#e8ebf2";x.font="16px sans-serif";
+export function raceTick(){const cv=$("rc2"),k=pxScale(),pw=Math.round(innerWidth*k),ph=Math.round(innerHeight*k);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}
+ const ins=raceInsets(),aw=cv.width-(ins.l+ins.r)*k,ah=cv.height-(ins.t+ins.b)*k; // freie Fläche neben Kopfzeile und Bildschirmtasten (am PC: ganzes Fenster)
+ const x=cv.getContext("2d"),sc=Math.min(aw/W,ah/H);x.setTransform(1,0,0,1,0,0);x.fillStyle="#1b2a1f";x.fillRect(0,0,cv.width,cv.height);x.setTransform(sc,0,0,sc,ins.l*k+(aw-W*sc)/2,ins.t*k+(ah-H*sc)/2);x.drawImage(app.roadC,0,0,W,H);if(app.showIdeal)drawIdeal(x);x.fillStyle="#e8ebf2";x.font="16px sans-serif";
  if(app.R.s==="idle"){x.font="22px sans-serif";x.fillText("Bereit? Klicke auf „Rennen starten“.",330,320);return}
  const now=performance.now();
  if(app.R.s==="cd"){const n=3-Math.floor((now-app.R.t0)/900);drawCar(x,0,app.R.car.x,app.R.car.y,app.R.car.a,"#4da3ff",1);showCd(n>0?n:"");if(n<=0){app.R.s="run";app.R.goT=now;app.R.last=now;app.R.acc=0}return}

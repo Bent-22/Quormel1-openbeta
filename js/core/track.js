@@ -1,6 +1,7 @@
 // QUORMEL 1 – Strecken: Vorlagen, Glättung, Abtastung, Straßenmaske (fest 1000 × 640), Strecken-ID, Prüfung, Ideallinie.
 import {app} from "../state.js";
 import {H,W} from "./constants.js";
+import {pxScale} from "../render/hidpi.js";
 
 // ===== Strecken =====
 export const PRE=[{id:"einfach",n:"Flitzpiepen-Ring",d:"Einfach",w:100,t:"Breit, lange Gerade, große Radien.",c:[[80,540],[400,570],[800,540],[930,380],[820,200],[500,110],[200,140]]},
@@ -11,7 +12,8 @@ export function rs(p,s){const o=[{x:p[0].x,y:p[0].y}];for(let i=1;i<p.length;i++
 export function setTrack(name,w,pts){const p=rs(pts,5);app.T={name,w,p,id:trackHash(p,w),a0:Math.atan2(p[3].y-p[0].y,p[3].x-p[0].x),ideal:idealLine(p,w)};
  const m=document.createElement("canvas");m.width=W;m.height=H;const x=m.getContext("2d");x.lineCap=x.lineJoin="round";x.lineWidth=w;x.strokeStyle="#fff";x.beginPath();p.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();
  const d=x.getImageData(0,0,W,H).data;app.mask=new Uint8Array(W*H);for(let i=0;i<W*H;i++)app.mask[i]=d[i*4+3]>128?1:0;
- app.roadC=document.createElement("canvas");app.roadC.width=W;app.roadC.height=H;const r=app.roadC.getContext("2d");r.fillStyle="#1b2a1f";r.fillRect(0,0,W,H);r.lineCap=r.lineJoin="round";
+ const k=pxScale();app.roadC=document.createElement("canvas");app.roadC.width=Math.round(W*k);app.roadC.height=Math.round(H*k);const r=app.roadC.getContext("2d");r.scale(app.roadC.width/W,app.roadC.height/H); // nur Anzeige: auf High-DPI-Displays feiner gezeichnet, immer als W × H darzustellen
+ r.fillStyle="#1b2a1f";r.fillRect(0,0,W,H);r.lineCap=r.lineJoin="round";
  const path=()=>{r.beginPath();p.forEach((q,i)=>i?r.lineTo(q.x,q.y):r.moveTo(q.x,q.y));r.stroke()};r.lineWidth=w+8;r.strokeStyle="#e8ebf2";path();r.lineWidth=w;r.strokeStyle="#3a3f4b";path();
  r.setLineDash([14,18]);r.lineWidth=2;r.strokeStyle="#ffffff55";path();r.setLineDash([]);
  for(const [q,c] of [[p[0],"#2ecc71"],[p[p.length-1],"#ff2d3d"]]){const i=p.indexOf(q),b=p[Math.min(i+(c==="#ff2d3d"?-1:1),p.length-1)]||q,a=Math.atan2(b.y-q.y,b.x-q.x)+Math.PI/2;r.strokeStyle=c;r.lineWidth=8;r.beginPath();r.moveTo(q.x-Math.cos(a)*w/2,q.y-Math.sin(a)*w/2);r.lineTo(q.x+Math.cos(a)*w/2,q.y+Math.sin(a)*w/2);r.stroke()}}

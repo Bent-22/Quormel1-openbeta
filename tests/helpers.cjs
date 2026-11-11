@@ -5,14 +5,19 @@ const ROOT = path.resolve(__dirname, "..");
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json", ".webmanifest": "application/manifest+json", ".png": "image/png", ".svg": "image/svg+xml" };
 const LEGACY = "/legacy/Quormel1_Finalcode.html", NEW = "/index.html";
 
+// state.down = true: Server antwortet nicht mehr (Netzausfall) · state.over[pfad] = Inhalt: liefert stattdessen diesen Inhalt (neue Fassung)
 function serve() {
   return new Promise(res => {
+    const state = { down: false, over: {} };
     const srv = http.createServer((rq, rs) => {
       let p = decodeURIComponent(rq.url.split("?")[0]); if (p.endsWith("/")) p += "index.html";
+      if (state.down) { rs.destroy(); return }
+      if (p.startsWith("/unterordner/")) p = p.slice(12); // dieselbe Seite unter einer Unteradresse (wie bei GitHub Pages)
+      if (p in state.over) { rs.writeHead(200, { "content-type": MIME[path.extname(p)] || "application/octet-stream", "cache-control": "no-store" }); rs.end(state.over[p]); return }
       const f = path.join(ROOT, p);
       if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rs.writeHead(404); rs.end("404"); return }
       rs.writeHead(200, { "content-type": MIME[path.extname(f)] || "application/octet-stream", "cache-control": "no-store" }); fs.createReadStream(f).pipe(rs);
-    }).listen(0, "127.0.0.1", () => res({ url: "http://127.0.0.1:" + srv.address().port, close: () => srv.close() }));
+    }).listen(0, "127.0.0.1", () => res({ url: "http://127.0.0.1:" + srv.address().port, close: () => srv.close(), state }));
   });
 }
 async function launch() {

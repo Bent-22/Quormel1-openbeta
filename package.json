@@ -1,0 +1,13 @@
+{
+  "name": "quormel1-openbeta",
+  "private": true,
+  "description": "QUORMEL 1 – ein Auto lernt mit Q-Learning, eine Rennstrecke zu fahren.",
+  "scripts": {
+    "test": "node tests/golden.cjs && node tests/ui.cjs",
+    "test:golden": "node tests/golden.cjs",
+    "test:ui": "node tests/ui.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}

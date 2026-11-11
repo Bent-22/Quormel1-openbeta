@@ -1,5 +1,45 @@
 # QUORMEL 1 – Testbericht
 
+## Phase 4 (11.11.2026)
+
+**Ergebnis: 803 von 803 Prüfungen bestanden** (29 Lernlogik, 107 Oberfläche am PC, 639 Geräteprofile, 28 PWA).
+
+Umgebung: Chrome 153 ohne Fenster (Playwright 1.63), Linux, Testserver auf `127.0.0.1`.
+
+**Wichtig:** Service Worker, Offline-Betrieb und Versionswechsel wurden in Chrome geprüft. Safari, echte Geräte und das tatsächliche Installieren auf dem Home-Bildschirm wurden nicht getestet.
+
+### PWA (`tests/pwa.cjs`) – 28/28
+
+| Bereich | Prüfung |
+|---|---|
+| Dateien | Dateiliste und Versionskennung in `sw.js` aktuell; alle 35 Dateien vorhanden; Manifest mit Name, Startadresse, Anzeige, Farben, Icons |
+| Erster Besuch | Service Worker aktiv und steuert die Seite; Cache enthält alle Dateien; Verweise auf Manifest, Theme-Farbe und Icons (192, 512, maskierbar, 180) |
+| Ohne Internet | Server abgeschaltet und Browser offline: Startseite lädt; Stand laden; Training läuft; JSON-Export und -Import funktionieren; keine fehlgeschlagenen Abrufe |
+| Versionswechsel | Neue Fassung lädt im Hintergrund, alte bleibt aktiv, Hinweis erscheint; nach „Jetzt aktualisieren“ neue Fassung aktiv, alter Cache entfernt; Trainingsstand unverändert |
+| Schutz | Verlassen der App speichert sofort (im Test: gespeichert Episode 50 → 60 bei laufender Episode 60); Bitte um dauerhaften Speicher beim Trainingsstart |
+| Installationshilfe | Knopf „App installieren“ erscheint beim Angebot des Browsers und öffnet den Dialog; iPhone-Profil zeigt den Hinweis auf „Teilen“; als App gestartet kein Hinweis |
+| Export als App (iPhone-Profil) | Teilen-Dialog erhält Datei mit vollständigem Stand |
+| Adresse | Unter einer Unteradresse (wie GitHub Pages) funktionieren Cache und Offline-Start |
+| Installierbarkeit | Chrome meldet keine Hindernisse für die Installation |
+
+### Übrige Tests
+
+Lernlogik 29/29, Oberfläche am PC 107/107 und Geräteprofile 639/639 laufen mit aktivem Service Worker unverändert durch.
+
+### Sichtprüfung
+
+Startseite auf dem iPhone-Profil mit allen Hinweisen (Update, Installation, Offline-Status, Speicherhinweis) angesehen.
+
+### Nicht getestet
+
+- **Safari, iPad, iPhone, Android-Geräte**; Installation auf dem Home-Bildschirm; Start der installierten App
+- Veröffentlichung bei Cloudflare Pages und GitHub Pages (geprüft wurde mit einem lokalen Testserver)
+- ob und wann ein Browser den dauerhaften Speicher tatsächlich gewährt
+- Verhalten, wenn das System die App im Hintergrund beendet
+- Teilen-Dialog auf echtem iPad/iPhone
+
+---
+
 ## Phase 3 (11.11.2026)
 
 **Ergebnis: 775 von 775 Prüfungen bestanden** (29 Lernlogik, 107 Oberfläche am PC, 639 Geräteprofile).

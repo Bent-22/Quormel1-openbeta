@@ -1,6 +1,6 @@
 # QUORMEL 1 – Technische Architektur
 
-Stand: Phase 3 (11.11.2026)
+Stand: Phase 4 (11.11.2026)
 
 ## Überblick
 
@@ -8,6 +8,9 @@ Die Anwendung besteht aus statischen Dateien ohne Build-Schritt und ohne Abhäng
 
 ```
 index.html            Grundgerüst: 7 Seiten, 11 Modale, Overlays
+sw.js                 Service Worker (Offline-Cache, Versionswechsel)
+manifest.webmanifest  Angaben für die Installation
+icons/                App-Icons
 css/quormel.css       Design (unverändert aus der Originaldatei)
 js/main.js            Einstieg: Hauptschleife, Initialisierung
 js/state.js           gemeinsamer veränderlicher Zustand (Objekt app)
@@ -15,6 +18,7 @@ js/core/              Lernkern und Strecke
 js/storage/           Speicherstand und Bestzeiten
 js/render/            Zeichnen (Draufsicht, First-Person, High-DPI)
 js/input/             Touch-Bedienung
+js/pwa/               Anmeldung des Service Workers, Installationshilfe
 js/ui/                Seiten, Dialoge, Eingaben
 ```
 
@@ -34,6 +38,8 @@ js/ui/                Seiten, Dialoge, Eingaben
 | `render/fpv.js` | First-Person-Ansicht samt vorberechneter Geometrie |
 | `render/hidpi.js` | Auflösung der Anzeige-Canvas (`pxScale`, `hd`) |
 | `input/touch-controls.js` | Touch-Modus, Bildschirmtasten im Rennen, freie Fläche für die Strecke |
+| `storage/protect.js` | Speichern beim Verlassen, Bitte um dauerhaften Speicher |
+| `pwa/register.js` | Service Worker anmelden, Offline-Status, Update-Hinweis, Installationshilfe |
 | `ui/dom.js` | Elementzugriff, Seitenwechsel, Hinweise, Modale |
 | `ui/actions.js` | Aktionen für `data-click`, `data-input`, `data-change` |
 | `ui/library.js`, `ui/editor.js` | Streckenwahl, Streckeneditor |
@@ -55,7 +61,7 @@ Parameter-Labor und Duell tauschen wie im Original Teile dieses Zustands aus:
 
 ## Initialisierung
 
-Jedes Modul enthält auf oberster Ebene nur Funktionen und Konstanten. Alles, was beim Laden etwas ausführt (Ereignisse anmelden, Karten erzeugen, Speicherstand prüfen), steht in `init()`-Funktionen. `main.js` ruft diese 25 Schritte in **genau der Reihenfolge der Originaldatei** auf, danach die Ergänzungen (`touchControls.init()`), und startet die Hauptschleife. Module mit mehreren Schritten haben `init()`, `init2()` usw.
+Jedes Modul enthält auf oberster Ebene nur Funktionen und Konstanten. Alles, was beim Laden etwas ausführt (Ereignisse anmelden, Karten erzeugen, Speicherstand prüfen), steht in `init()`-Funktionen. `main.js` ruft diese 25 Schritte in **genau der Reihenfolge der Originaldatei** auf, danach die Ergänzungen (`touchControls.init()`, `protect.init()`, `pwa.init()`), und startet die Hauptschleife. Module mit mehreren Schritten haben `init()`, `init2()` usw.
 
 ## Ereignisse
 
@@ -104,9 +110,17 @@ Der Lernkern ruft wie im Original direkt Oberflächenfunktionen auf (`toast`, `s
 
 Alle Regeln stehen im Block „Phase 3“ am Ende von `css/quormel.css`. Stufen: bis 700 px (Smartphone hoch), bis 1100 px (Tablet, schmale Fenster), Höhe bis 520 px (Smartphone quer), `pointer: coarse` (Bedienflächen).
 
-## Hinweise für Phase 4
+## PWA (Phase 4)
 
-- Alle Pfade sind relativ; der Service Worker kann dieselbe Dateiliste für jede Adresse verwenden.
-- Zu cachen: `index.html`, `css/quormel.css`, alle Dateien unter `js/`, später Manifest und Icons.
-- Ergänzungen in `main.js` nach `touchControls.init()` einhängen.
-- Nach jeder Änderung: `npm test`.
+Beschrieben in [pwa-offline.md](pwa-offline.md). Kurzfassung:
+
+- `sw.js` hält eine Dateiliste und eine Versionskennung (beides von `tools/update-sw.cjs` eingetragen), beantwortet genau diese Dateien aus dem Cache und wechselt die Fassung nur auf Nachricht der Seite.
+- `pwa/register.js` zeigt Status, Update-Hinweis und Installationshilfe im Bereich `#pwa` der Startseite.
+- `storage/protect.js` ruft `persist()` auf, wenn die Seite verborgen wird, und bittet um dauerhaften Speicher. Format und Inhalt des Speicherstands sind unverändert.
+- Trainingsstände liegen weiter in `localStorage`; der Service Worker berührt sie nicht.
+
+## Hinweise für Phase 5
+
+- Vor jedem Commit mit Änderungen an der Anwendung: `node tools/update-sw.cjs`, dann `npm test`.
+- Offene Entscheidungen aus dem Plan (Abschnitt 10): IndexedDB, gebündeltes Speichern, 120-Hz-Ausgleich, mehrere Speicherplätze.
+- Zusammenführung nach `main` steht noch aus.

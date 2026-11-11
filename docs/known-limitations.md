@@ -1,6 +1,18 @@
 # QUORMEL 1 – Bekannte Einschränkungen
 
-Stand: Phase 3 (11.11.2026)
+Stand: Phase 4 (11.11.2026)
+
+## Installation, Offline, Speicher (Phase 4)
+
+- **Nicht auf echten Geräten und nicht in Safari getestet.** Service Worker, Offline-Betrieb und Versionswechsel sind in Chrome geprüft. Installation und Start vom Home-Bildschirm sind ungeprüft.
+- **iPad und iPhone: getrennter Speicher.** Die installierte App und Safari teilen ihre Daten nicht. Die App muss einmal mit Internet gestartet werden, und Trainingsstände aus Safari erscheinen dort nicht (Übertragung per Export und Import).
+- **App löschen löscht Trainingsstände.** Vorher exportieren.
+- **Der Browser entscheidet über dauerhaften Speicher.** Lehnt er ab, kann er Daten bei Platzmangel oder langer Nichtnutzung löschen. Die Startseite zeigt, was gilt. Einzig sicher ist der Export als Datei.
+- **Speichern beim Verlassen ist nicht garantiert.** Beendet das System die App schlagartig, kann der letzte Schritt fehlen; dann gilt der letzte automatische Speicherstand.
+- **Privater Modus.** Dort gibt es in manchen Browsern keinen Offline-Betrieb, und Daten werden beim Schließen verworfen.
+- **`node tools/update-sw.cjs` nicht vergessen.** Ohne diesen Schritt nach Änderungen erhalten Geräte, die die Seite kennen, die neue Fassung nicht.
+- **Update-Hinweis nur auf der Startseite.** Wer nie zur Startseite zurückkehrt, sieht ihn nicht.
+- **Offline nur die Anwendung.** `docs/` und `legacy/` sind ohne Internet nicht erreichbar.
 
 ## Geräte und Touch (Phase 3)
 
@@ -17,11 +29,9 @@ Stand: Phase 3 (11.11.2026)
 ## Aus Phase 2
 
 - **Kein Start per Doppelklick.** `index.html` muss über einen Webserver geöffnet werden. Die Originaldatei `legacy/Quormel1_Finalcode.html` funktioniert weiterhin per Doppelklick, enthält aber keine der neuen Funktionen.
-- **Zwischenspeicher des Browsers.** Nach einer neuen Veröffentlichung kann ein Browser kurzzeitig alte und neue Dateien mischen. Abhilfe bis Phase 4: Seite neu laden ohne Cache.
 
 ## Unverändert aus der Originaldatei
 
-- Nicht installierbar, nicht offline nutzbar (Phase 4).
 - Auf 120-Hz-Displays (z. B. iPad Pro) laufen Training, Labor und Wiedergaben doppelt so schnell.
 - Training hält an, wenn Tab oder Bildschirm inaktiv sind.
 - In der Wiedergabe wackeln die Schaltflächen auf breiten Bildschirmen leicht, weil die Zeitanzeige ihre Breite ändert.

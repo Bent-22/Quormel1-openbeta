@@ -2,7 +2,7 @@
 
 Ein Auto lernt mit tabellarischem Q-Learning, eine Rennstrecke zu fahren – durch Versuch und Irrtum, ohne vorgegebene Fahrlinie.
 
-Dieses Repository enthält die Weiterentwicklung der ursprünglichen Einzeldatei zu einer plattformübergreifenden Web-Anwendung. Stand: **Phase 3 von 5 abgeschlossen** (Gerätekompatibilität und Touch-Bedienung). Installierbarkeit und Offline-Betrieb folgen in Phase 4.
+Dieses Repository enthält die Weiterentwicklung der ursprünglichen Einzeldatei zu einer plattformübergreifenden Web-Anwendung. Stand: **Phase 4 von 5 abgeschlossen**. Die Anwendung ist installierbar und funktioniert nach dem ersten Laden offline.
 
 ## Starten
 
@@ -16,7 +16,9 @@ Danach im Browser `http://localhost:8080` öffnen.
 
 ## Veröffentlichen
 
-Zur Website gehören `index.html`, `css/` und `js/`. Anleitung für GitHub Pages und Cloudflare Pages: [docs/install-and-build.md](docs/install-and-build.md).
+Schritt für Schritt, einschließlich Installation auf iPad, iPhone und Android: [docs/publish-and-install.md](docs/publish-and-install.md).
+
+Nach jeder Änderung an Dateien der Anwendung vor dem Hochladen: `node tools/update-sw.cjs`.
 
 ## Dokumentation
 
@@ -25,7 +27,9 @@ Zur Website gehören `index.html`, `css/` und `js/`. Anleitung für GitHub Pages
 | [docs/modernization-plan.md](docs/modernization-plan.md) | Analyse und Plan (Phase 1) |
 | [docs/architecture.md](docs/architecture.md) | Technische Architektur |
 | [docs/changes.md](docs/changes.md) | Übersicht der Änderungen je Phase |
-| [docs/install-and-build.md](docs/install-and-build.md) | Starten, Veröffentlichen, Tests |
+| [docs/publish-and-install.md](docs/publish-and-install.md) | Veröffentlichen über HTTPS, Installation auf iPad, iPhone, Android |
+| [docs/pwa-offline.md](docs/pwa-offline.md) | Offline-Betrieb, Versionswechsel, Schutz der Trainingsstände |
+| [docs/install-and-build.md](docs/install-and-build.md) | Lokal starten, Tests |
 | [docs/test-report.md](docs/test-report.md) | Testbericht |
 | [docs/known-limitations.md](docs/known-limitations.md) | Bekannte Einschränkungen |
 
@@ -33,7 +37,8 @@ Zur Website gehören `index.html`, `css/` und `js/`. Anleitung für GitHub Pages
 
 | Ordner | Inhalt |
 |---|---|
-| `index.html`, `css/`, `js/` | die Anwendung |
+| `index.html`, `sw.js`, `manifest.webmanifest`, `css/`, `js/`, `icons/` | die Anwendung |
+| `tools/` | Hilfsskripte (Service-Worker-Liste, Icons) |
 | `legacy/` | unveränderte Originaldatei als Vergleichsgrundlage |
 | `tests/` | automatische Vergleichs- und Oberflächentests |
 | `docs/` | Dokumentation |

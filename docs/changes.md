@@ -1,5 +1,41 @@
 # QUORMEL 1 – Übersicht der Änderungen
 
+## Phase 4 – PWA und Offline-Betrieb (11.11.2026)
+
+### Neu
+
+| Bereich | Umsetzung |
+|---|---|
+| Installierbar | Manifest, App-Icons (192, 512, maskierbar, iPad/iPhone), Theme-Farbe, Angaben für iOS |
+| Offline | Service Worker lädt beim ersten Besuch alle 35 Dateien in einen Cache; danach läuft die App ohne Internet |
+| Versionswechsel | Neue Fassung lädt im Hintergrund; Hinweis auf der Startseite; Wechsel erst nach „Jetzt aktualisieren“ |
+| Installationshilfe | Android/Chrome/Edge: Knopf „App installieren“. iPad/iPhone: Hinweis auf „Teilen“ → „Zum Home-Bildschirm“ |
+| Startseite | Statuszeile „Offline bereit …“ und Angabe, ob der Browser die Trainingsstände dauerhaft speichert |
+
+### Schutz der Trainingsstände
+
+| Maßnahme | Vorher | Nachher |
+|---|---|---|
+| Speichern beim Verlassen | nur alle 50 Episoden, bei Erfolg und bei neuem Bestfortschritt | zusätzlich sofort, wenn die App in den Hintergrund geht oder geschlossen wird |
+| Dauerhafter Speicher | nicht angefragt | Bitte an den Browser beim Trainingsstart, Laden und Import |
+| Export in der installierten App auf iPad/iPhone | Download (dort unzuverlässig) | Teilen-Dialog |
+
+### Unverändert
+
+- Q-Learning-Logik
+- Speicherformat und Speicherort (`localStorage`, `q1save`); JSON-Import und -Export am PC und im Browser wie bisher
+- Darstellung am PC bis auf die neuen Zeilen auf der Startseite
+- keine Cloud-Synchronisation, keine fremden Ressourcen
+
+### Dateien
+
+- neu: `sw.js`, `manifest.webmanifest`, `icons/`, `js/pwa/register.js`, `js/storage/protect.js`, `tools/update-sw.cjs`, `tools/make-icons.cjs`, `tests/pwa.cjs`, `docs/pwa-offline.md`, `docs/publish-and-install.md`
+- geändert: `index.html` (Kopfangaben, Bereich auf der Startseite), `css/quormel.css` (Block „Phase 4“), `js/main.js`, `js/storage/save.js` (nur Export)
+
+### Neue Pflicht
+
+Nach jeder Änderung an Dateien der Anwendung: `node tools/update-sw.cjs`.
+
 ## Phase 3 – Gerätekompatibilität und Touch-Bedienung (11.11.2026)
 
 ### Neu

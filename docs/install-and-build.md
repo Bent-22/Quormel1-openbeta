@@ -62,9 +62,10 @@ npm test
 | Befehl | Inhalt |
 |---|---|
 | `npm run test:golden` | Lernlogik: Original und Neufassung müssen mit gleichem Seed identische Ergebnisse liefern |
-| `npm run test:ui` | Oberfläche: gleiche Bedienfolge in beiden Fassungen, Vergleich nach jedem Schritt |
+| `npm run test:ui` | Oberfläche am PC: gleiche Bedienfolge in beiden Fassungen, Vergleich nach jedem Schritt |
+| `npm run test:devices` | 14 Geräteprofile: Layout, Auflösung, Touch-Rennsteuerung, Editor mit Finger und Stift |
 
-Die Tests starten selbst einen lokalen Server und einen Browser ohne Fenster. Laufzeit zusammen etwa zweieinhalb Minuten.
+Die Tests starten selbst einen lokalen Server und einen Browser ohne Fenster. Laufzeit zusammen etwa sieben Minuten.
 
 ## PWA und Offline
 

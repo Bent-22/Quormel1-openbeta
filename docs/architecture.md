@@ -1,6 +1,6 @@
 # QUORMEL 1 – Technische Architektur
 
-Stand: Phase 2 (11.11.2026)
+Stand: Phase 3 (11.11.2026)
 
 ## Überblick
 
@@ -13,7 +13,8 @@ js/main.js            Einstieg: Hauptschleife, Initialisierung
 js/state.js           gemeinsamer veränderlicher Zustand (Objekt app)
 js/core/              Lernkern und Strecke
 js/storage/           Speicherstand und Bestzeiten
-js/render/            Zeichnen (Draufsicht, First-Person)
+js/render/            Zeichnen (Draufsicht, First-Person, High-DPI)
+js/input/             Touch-Bedienung
 js/ui/                Seiten, Dialoge, Eingaben
 ```
 
@@ -31,6 +32,8 @@ js/ui/                Seiten, Dialoge, Eingaben
 | `storage/records.js` | persönliche Bestzeiten pro Strecke |
 | `render/sim-view.js` | Draufsicht, Sensorstrahlen, Fortschrittsmarkierung, Ideallinie, Diagramm |
 | `render/fpv.js` | First-Person-Ansicht samt vorberechneter Geometrie |
+| `render/hidpi.js` | Auflösung der Anzeige-Canvas (`pxScale`, `hd`) |
+| `input/touch-controls.js` | Touch-Modus, Bildschirmtasten im Rennen, freie Fläche für die Strecke |
 | `ui/dom.js` | Elementzugriff, Seitenwechsel, Hinweise, Modale |
 | `ui/actions.js` | Aktionen für `data-click`, `data-input`, `data-change` |
 | `ui/library.js`, `ui/editor.js` | Streckenwahl, Streckeneditor |
@@ -52,7 +55,7 @@ Parameter-Labor und Duell tauschen wie im Original Teile dieses Zustands aus:
 
 ## Initialisierung
 
-Jedes Modul enthält auf oberster Ebene nur Funktionen und Konstanten. Alles, was beim Laden etwas ausführt (Ereignisse anmelden, Karten erzeugen, Speicherstand prüfen), steht in `init()`-Funktionen. `main.js` ruft diese 25 Schritte in **genau der Reihenfolge der Originaldatei** auf und startet danach die Hauptschleife. Module mit mehreren Schritten haben `init()`, `init2()` usw.
+Jedes Modul enthält auf oberster Ebene nur Funktionen und Konstanten. Alles, was beim Laden etwas ausführt (Ereignisse anmelden, Karten erzeugen, Speicherstand prüfen), steht in `init()`-Funktionen. `main.js` ruft diese 25 Schritte in **genau der Reihenfolge der Originaldatei** auf, danach die Ergänzungen (`touchControls.init()`), und startet die Hauptschleife. Module mit mehreren Schritten haben `init()`, `init2()` usw.
 
 ## Ereignisse
 
@@ -80,10 +83,30 @@ Der Lernkern ruft wie im Original direkt Oberflächenfunktionen auf (`toast`, `s
 | Grundstand auf `main` | nicht angelegt | alle Arbeit liegt auf `feat/quormel-cross-platform-pwa`; Zusammenführung in Phase 5 |
 | Kontextobjekt ersetzt `getC`/`setC` | Zustand liegt in `app`, `getC`/`setC` bleiben | 1:1-Übernahme hat Vorrang |
 
-## Hinweise für Phase 3
+## High-DPI (Phase 3)
 
-- Rennsteuerung per Touch: Bildschirmtasten müssen nur `app.keys.w/a/s/d` setzen (`ui/race.js`); die Fahrphysik in `raceTick()` bleibt unberührt.
-- Editor: Zeigerereignisse stehen in `ui/editor.js` (`init()`), die Punktannahme in `edAccept()`.
-- High-DPI: Anzeige-Canvas in `render/` und `ui/`; `setTrack()` in `core/track.js` nicht anfassen.
-- Layout: ausschließlich `css/quormel.css` und `index.html`.
+`hd(canvas)` liefert den Zeichenkontext eines Canvas. Gezeichnet wird weiter in logischen Einheiten; die Pixelzahl des Canvas ist um `pxScale()` größer (Pixeldichte des Geräts, höchstens 2). Bei Pixeldichte 1 ändert sich nichts.
+
+- Canvas mit fester logischer Größe (Strecke 1000 × 640, Diagramm, Vorschauen, Glücksrad …): `hd(cv)`.
+- Vollflächige Canvas (First-Person, Editor): `hd(cv, innerWidth, innerHeight)`.
+- Rennen: eigene Transformation in Gerätepixeln (`raceTick()`).
+- `app.roadC` (Straßengrafik) wird in `setTrack()` um `pxScale()` feiner erzeugt und immer als 1000 × 640 dargestellt.
+- **`app.mask` bleibt 1000 × 640.** Der Gerätetest prüft, dass Maske und Lernergebnis auf allen Profilen identisch sind.
+
+## Touch-Bedienung (Phase 3)
+
+- **Touch-Modus** (`body.touch`): gesetzt bei `pointer: coarse` oder bei der ersten Berührung mit Finger/Stift. Bleibt bis zum Neuladen aktiv.
+- **Bildschirmtasten** (`#tc` in `index.html`): Zeigerereignisse am Container; pro Zeiger wird die Taste unter dem Finger bestimmt. Gesetzt werden `app.keys.a/d/s/w` – `raceTick()` und die Fahrphysik sind unverändert.
+- **Freie Fläche im Rennen** (`raceInsets()`): Kopfzeile oben; Tasten seitlich oder unten, gewählt nach dem größeren Maßstab. Ohne Touch-Modus alle Ränder 0.
+- **Editor** (`edDown`, `edMove`, `edUp` in `ui/editor.js`): ein aktiver Zeiger (`edSt.pid`), Stiftvorrang (`edSt.pen`, `edSt.len0`), `pointercancel`, zusammengefasste Ereignisse für Finger und Stift. Die Maus verhält sich wie zuvor.
+
+## Layout (Phase 3)
+
+Alle Regeln stehen im Block „Phase 3“ am Ende von `css/quormel.css`. Stufen: bis 700 px (Smartphone hoch), bis 1100 px (Tablet, schmale Fenster), Höhe bis 520 px (Smartphone quer), `pointer: coarse` (Bedienflächen).
+
+## Hinweise für Phase 4
+
+- Alle Pfade sind relativ; der Service Worker kann dieselbe Dateiliste für jede Adresse verwenden.
+- Zu cachen: `index.html`, `css/quormel.css`, alle Dateien unter `js/`, später Manifest und Icons.
+- Ergänzungen in `main.js` nach `touchControls.init()` einhängen.
 - Nach jeder Änderung: `npm test`.

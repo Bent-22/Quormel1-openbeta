@@ -1,5 +1,41 @@
 # QUORMEL 1 – Übersicht der Änderungen
 
+## Phase 3 – Gerätekompatibilität und Touch-Bedienung (11.11.2026)
+
+### Neu
+
+| Bereich | Umsetzung |
+|---|---|
+| Rennsteuerung | Vier Bildschirmtasten: Links, Rechts (unten links), Bremse, Gas (unten rechts). Mehrere Finger gleichzeitig; ein Finger kann von Links nach Rechts gleiten. Die Tasten setzen dieselben Eingaben wie A, D, S, W. |
+| Touch-Modus | Aktiv auf Geräten mit Touch als Hauptbedienung und ab der ersten Berührung mit Finger oder Stift. Blendet die Tasten ein und ändert zwei Hinweistexte („Tippe auf Gas …“, „Zeichne … mit dem Finger oder Stift“). |
+| Rennansicht | Im Touch-Modus bleibt die Kopfzeile frei, und die Strecke wird neben oder über den Tasten platziert – je nachdem, wo sie größer wird. |
+| Streckeneditor | Finger und Stift (Apple Pencil): keine Scroll-/Zoom-Gesten auf der Zeichenfläche, genau ein zeichnender Zeiger, abgebrochene Berührungen beenden den Strich, feinere Abtastung bei Finger und Stift. |
+| Stiftvorrang | Liegt die Hand schon auf, wenn der Stift aufsetzt, wird ihr Strich verworfen. Nach der ersten Stiftberührung zeichnen Finger bis zum Schließen des Editors nicht mehr mit. |
+| Retina / High-DPI | Alle Anzeige-Canvas zeichnen in Geräteauflösung (Faktor bis 2). Die Straßengrafik wird entsprechend feiner erzeugt. |
+| Layout | Smartphone und Tablet in Hoch- und Querformat: Strecke zuerst, darunter Einstellungen und Analyse (auf Tablets nebeneinander). Abstände zu Notch und Home-Balken, Höhe folgt der sichtbaren Fläche, Dialoge scrollen, Bedienflächen mindestens 44 px. |
+
+### Geändertes Verhalten am PC
+
+| Stelle | Vorher | Nachher |
+|---|---|---|
+| Editor, Fenstergröße ändern | Zeichnung wurde gestreckt | Zeichnung behält ihre Form |
+| Fenster schmaler als 1100 px | Einstellungen, Strecke, Analyse untereinander | Strecke zuerst; zwischen 701 und 1100 px Einstellungen und Analyse nebeneinander |
+| Fenster schmaler als 1100 px | Namenszeile auf der Startseite ragte über den Rand | Namenszeile bricht um |
+| Retina-Bildschirme | unscharfe Canvas | scharfe Canvas |
+
+Bei einem Fenster ab 1101 px Breite mit Maus und Pixeldichte 1 ist die Darstellung unverändert (belegt durch den Vergleichstest mit dem Original).
+
+### Unverändert
+
+- Q-Learning-Logik und Straßenmaske (1000 × 640)
+- Tastatur- und Maussteuerung
+- Speicherformat, Speicherort, alle Texte außerhalb des Touch-Modus
+
+### Dateien
+
+- neu: `js/render/hidpi.js`, `js/input/touch-controls.js`, `tests/devices.cjs`
+- geändert: `index.html` (Viewport, Bildschirmtasten), `css/quormel.css` (Block „Phase 3“ am Ende), `js/ui/editor.js`, `js/ui/race.js`, `js/render/*`, `js/core/track.js` (nur Straßengrafik), kleinere Anpassungen an allen Stellen, die ein Canvas zeichnen
+
 ## Phase 2 – Technische Modernisierung (11.11.2026)
 
 Ziel war ein Umbau ohne Verhaltensänderung. Es wurde keine Funktion hinzugefügt und keine entfernt.

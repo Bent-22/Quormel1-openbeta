@@ -2,7 +2,7 @@
 
 Ein Auto lernt mit tabellarischem Q-Learning, eine Rennstrecke zu fahren – durch Versuch und Irrtum, ohne vorgegebene Fahrlinie.
 
-Dieses Repository enthält die Weiterentwicklung der ursprünglichen Einzeldatei zu einer plattformübergreifenden Web-Anwendung. Stand: **Phase 2 von 5 abgeschlossen** (technische Modernisierung).
+Dieses Repository enthält die Weiterentwicklung der ursprünglichen Einzeldatei zu einer plattformübergreifenden Web-Anwendung. Stand: **Phase 3 von 5 abgeschlossen** (Gerätekompatibilität und Touch-Bedienung). Installierbarkeit und Offline-Betrieb folgen in Phase 4.
 
 ## Starten
 

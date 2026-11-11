@@ -1,0 +1,624 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>quormel 1</title>
+<style>
+:root{--bg:#0b0d12;--p:#151922;--l:#262c3a;--t:#e8ebf2;--m:#8a93a6;--a:#ff2d3d;--g:#2ecc71}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px system-ui,sans-serif}
+section{display:none;min-height:100vh;padding:18px}section.on{display:block}
+button{background:var(--l);color:var(--t);border:1px solid #3a4258;border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--a)}button:disabled{opacity:.4;cursor:not-allowed}button.pri{background:var(--a);border-color:var(--a);font-weight:700}
+#home{text-align:center}#home canvas{width:min(900px,100%);background:transparent}
+h1{font:italic 900 clamp(48px,9vw,120px)/1 "Arial Black",system-ui;letter-spacing:-3px;margin:10px 0}h1 span{color:var(--a)}
+.by{color:var(--m);letter-spacing:4px;font-size:12px;text-transform:uppercase;margin-top:16px}
+.n1{font-size:30px;font-weight:800;letter-spacing:6px}.n2{font-size:17px;letter-spacing:4px;color:#c3c9d8;margin-top:4px}
+.nav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:22px 0}.nav button{min-width:230px;padding:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:1100px;margin:20px auto}
+.card{background:var(--p);border:1px solid var(--l);border-radius:12px;padding:14px}.card canvas{width:100%;background:#0f1218;border-radius:8px}
+.grid{display:grid;grid-template-columns:270px minmax(0,1fr) 340px;gap:12px;align-items:start}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}}
+.pan{background:var(--p);border:1px solid var(--l);border-radius:12px;padding:12px}
+.pan label{display:block;margin-top:9px;font-weight:600}.pan small{color:var(--m);display:block;font-weight:400}
+input,select{width:100%;background:#0f1218;color:var(--t);border:1px solid #3a4258;border-radius:6px;padding:6px}
+#sc{width:100%;background:#0f1218;border-radius:10px}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}.kp div{background:#0f1218;padding:6px 8px;border-radius:6px}.kp b{display:block;font-size:16px}
+details{margin-top:10px}summary{cursor:pointer;font-weight:700}table{border-collapse:collapse;width:100%;font:13px monospace}td,th{border-bottom:1px solid var(--l);padding:2px 3px;text-align:right}
+td.mx{background:#1d5a38}#log{font:13px/1.45 monospace;color:var(--m);max-height:170px;overflow:auto}
+#ed{position:fixed;inset:0;background:#0b0d12;z-index:20;display:none}#ed canvas{display:block;width:100%;height:100%;cursor:crosshair}
+#ed .tb{position:absolute;top:10px;right:10px;display:flex;gap:8px}#ed .hint{position:absolute;bottom:14px;width:100%;text-align:center;color:var(--m)}
+#pz{position:fixed;inset:0;background:#0b0d12e8;z-index:15;display:none;align-items:center;justify-content:center}
+.orb{position:absolute;width:260px;height:260px;animation:sp 2.6s linear infinite}.orb i{position:absolute;left:122px;top:-4px;width:28px;height:15px;background:var(--a);border-radius:4px;transform:rotate(0)}
+@keyframes sp{to{transform:rotate(360deg)}}#pz button{position:relative;z-index:2;font-size:18px;padding:16px 28px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222a3a;border:1px solid var(--a);padding:10px 18px;border-radius:8px;display:none;z-index:40}
+canvas.v{width:min(960px,100%);background:#000;border-radius:10px;display:block;margin:8px auto}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin:8px 0}
+#home.on{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#rpv.on,#race.on{position:fixed;inset:0;padding:0;background:#000;z-index:10}
+#rpv canvas,#race canvas{width:100%!important;height:100%!important;max-width:none;margin:0;border-radius:0;object-fit:contain;display:block}
+#rpv>button,#race>button{position:absolute;top:10px;left:10px;z-index:6}
+#rpv .row{position:absolute;bottom:10px;left:0;right:0;z-index:5;background:#000a;margin:0;padding:6px}#race .row{position:absolute;top:10px;left:0;right:0;z-index:5;margin:0}
+#rpv small,#race p{display:none}
+.pw{position:relative;display:inline-block;margin:0 40px}.orb{display:none;position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;animation:sp 2s linear infinite;pointer-events:none;z-index:3}.orb.on{display:block}
+.orb i{position:absolute;left:61px;top:-7px;width:28px;height:15px;background:var(--a);border-radius:4px;box-shadow:0 0 8px var(--a)}
+#code{display:none;position:fixed;right:0;bottom:0;width:min(640px,100%);height:55vh;overflow:auto;z-index:12}
+.fn{background:#0f1218;padding:6px;margin:6px 0;border-left:3px solid var(--l);font:11px monospace;white-space:pre-wrap;overflow:auto;max-height:200px}.fn.hl{border-color:#ffb020}.fn.cur{border-color:var(--a);background:#2a1519}
+#wm{display:none;position:fixed;inset:0;background:#000c;z-index:50;align-items:center;justify-content:center}
+.ex summary{font-size:13px;color:var(--m);cursor:pointer;font-weight:400;margin-top:3px}.ex div{font-size:14px;color:#c3c9d8;margin:4px 0;line-height:1.45}
+.n1{font-size:clamp(11px,2.8vw,26px);font-weight:700;letter-spacing:5px;white-space:nowrap}.nav button{width:260px}
+.cards{grid-template-columns:repeat(3,1fr)}.card{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:space-between}.card p{margin:8px 0}
+.drawb{max-width:1100px;min-height:340px;margin:16px auto;border:2px dashed #3a4258;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--p);text-align:center}.drawb:hover{border-color:var(--a)}
+.pgrid{max-width:1100px;margin:0 auto 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.pgrid .sel{border-color:var(--a);background:#2a1519}
+@media(max-width:800px){.cards{grid-template-columns:1fr}.pgrid{grid-template-columns:repeat(2,1fr)}}
+.g3{display:grid;grid-template-columns:340px minmax(0,1fr) 410px;gap:12px;align-items:start}@media(max-width:1100px){.g3{grid-template-columns:1fr}}.up{outline:2px solid #ffb020;outline-offset:-2px}
+.mdl{display:none;position:fixed;inset:0;background:#000c;z-index:50;align-items:center;justify-content:center}
+.ex.ar{display:inline}.ex.ar summary{display:inline;list-style:none;cursor:pointer;color:var(--a);margin-left:6px}.ex.ar summary::-webkit-details-marker{display:none}.ex.ar div{font-weight:400}
+.hud{position:absolute;z-index:5;background:#10131add;border:1px solid var(--l);border-radius:10px;padding:8px 12px}#drv{top:56px;left:10px;width:290px;font-size:13px}#drv summary{cursor:pointer;font-weight:700}
+#hud{top:56px;right:10px;display:flex;flex-direction:column;gap:8px;min-width:170px}#hud small{color:var(--m);letter-spacing:2px;font-size:10px}#hud b{display:block;font:italic 800 26px "Arial Black",system-ui;font-variant-numeric:tabular-nums}
+.ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:6;pointer-events:none}
+#cd{font:italic 900 min(22vw,220px) "Arial Black",system-ui;color:#fff;text-shadow:0 0 40px #ff2d3d,0 6px 0 #0008}
+#rs .rc{pointer-events:auto;background:#10131af2;border:1px solid var(--a);border-radius:16px;padding:28px 36px;max-width:min(640px,90vw);text-align:center;box-shadow:0 20px 60px #000a;animation:pop .35s ease-out}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+.two,.two2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.two{max-width:1100px;margin:0 auto}.two .drawb{margin:0;min-height:260px}.two2{gap:12px}
+@media(max-width:800px){.two,.two2{grid-template-columns:1fr}}#dj.on{position:fixed;inset:0;overflow:auto;z-index:10;background:var(--bg)}#race.on{background:#1b2a1f}
+.bad{outline:2px solid var(--a)!important;outline-offset:1px;background:#2a1519!important}
+/* P04: Tabellen scrollen bei Bedarf innerhalb ihres Panels statt abgeschnitten zu werden; Präsentationsmodus für Beamer */
+.tw{overflow-x:auto;max-width:100%}.pan{min-width:0}
+body.pres{font-size:18px}body.pres table{font-size:15px}body.pres #log{font-size:15px;max-height:220px}body.pres .ex div,body.pres .pan small,body.pres #ae,body.pres #lm{font-size:15px!important}
+body.pres .kp{font-size:15px}body.pres .kp b{font-size:20px}body.pres #sens{font-size:15px!important}body.pres .pan label{font-size:17px}
+body.pres .grid{grid-template-columns:260px minmax(0,1fr) 430px}body.pres .g3{grid-template-columns:320px minmax(0,1fr) 480px}
+@media(max-width:1100px){body.pres .grid,body.pres .g3{grid-template-columns:1fr}}
+/* P05: Tempo-Umschalter im Parameter-Labor */
+.seg{display:inline-flex}.seg button{border-radius:0}.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0;margin-left:-1px}.seg .sel{border-color:var(--a);background:#2a1519;font-weight:700}
+/* P10: Tempoauswahl nicht über die ganze Breite */
+#rpv select{width:auto;min-width:72px}
+</style></head><body>
+<section id="home" class="on"><canvas id="hc" width="900" height="360"></canvas><h1>quormel <span>1</span></h1>
+<div class="by">Entwickelt von</div><div class="n1">BENT · MATHIS · LENNART · PASCAL · JAN · RAPHAEL</div>
+<div class="nav"><button class="pri" onclick="show('lib')">Zur Strecke</button><button id="bCont" onclick="loadSave()">Letzten Speicherstand laden</button></div><small id="saveHint" style="color:var(--m);display:none;margin:-10px 0 12px">Noch kein Speicherstand vorhanden – starte zuerst ein Training.</small>
+<div class="row" style="flex-direction:column;align-items:center;margin:0 0 14px"><button id="bExp" style="width:260px" title="Lädt den Speicherstand als .json-Datei herunter">Speicherstand exportieren</button><button id="bImp" style="width:260px" title="Lädt einen zuvor exportierten Speicherstand">Speicherstand importieren</button><input type="file" id="fImp" accept=".json,application/json" hidden></div>
+<small style="color:var(--m)">Ein Auto lernt mit echtem Q-Learning – durch Versuch und Irrtum, ohne vorgegebene Fahrlinie.</small></section>
+
+<section id="lib"><button onclick="show('home')">← Start</button><h2 style="text-align:center">Strecke wählen</h2><div class="cards" id="cards"></div><div id="drawblk"></div><div class="two"><div id="pw"></div><div id="kk"></div></div></section>
+
+<section id="sim"><div class="row" style="justify-content:flex-start"><button onclick="leave()">← Strecken</button><button class="pri" id="bGo">Training starten</button><span class="pw"><canvas id="pac" width="150" height="90" style="display:none;position:absolute;left:50%;top:50%;margin-left:-75px;pointer-events:none;z-index:4"></canvas><button id="bPause" disabled>Pause</button></span><button id="bMA">Analyse ▾</button><button id="bMB">Beste Fahrt &amp; Rennen ▾</button><button id="bCode">So lernt das Auto</button><button id="bIdeal">Ideallinie: aus</button><button id="bPres" title="Größere Schrift für Beamer">Präsentationsmodus: aus</button></div>
+<div class="grid"><div class="pan"><b>Einstellungen</b><small id="lockn">Vor dem Start änderbar, danach gesperrt.</small>
+<label>Lernrate α<small>Wie stark neue Erfahrung alte Q-Werte überschreibt.</small><input id="pa" type="number" min=".01" max="1" step=".01" value=".15"></label>
+<label>Discount-Faktor γ<small>Wie wichtig zukünftige Belohnungen sind.</small><input id="pg" type="number" min="0" max=".99" step=".01" value=".95"></label>
+<label>Exploration ε<small>Wie oft zufällig probiert wird.</small><input id="pe" type="number" min=".05" max="1" step=".05" value="1"></label>
+<label>Explorationsabnahme<small>ε wird nach jeder Episode damit multipliziert.</small><input id="pd" type="number" min=".9" max="1" step=".001" value=".995"></label>
+<label>Episoden<select id="pn"><option>100<option>500<option selected>1000<option>5000<option>10000</select></label><button id="bMore" disabled style="width:100%;margin-top:9px">Weiter trainieren</button>
+<label>Geschwindigkeit (Schritte/Bild)<small>Jederzeit änderbar.</small><input id="ps" type="range" min="1" max="100" value="8"></label>
+<details><summary>Reward-Gewichte</summary><small style="margin-top:6px;line-height:1.45">Hinweis: Strafen werden vom Reward abgezogen. Ein negativer Strafwert wird dadurch zur Belohnung – das Auto lernt dann genau das unerwünschte Verhalten. Umgekehrt wird eine negative Belohnung zur Strafe. Negative Werte sind für Experimente erlaubt.</small>
+<label>Ziel erreicht<input id="rg" type="number" value="100"></label><label>Straße verlassen (Strafe)<input id="rc" type="number" value="100"></label>
+<label>Fortschritt (pro Streckenpunkt)<input id="rp" type="number" step=".5" value="3"></label><label>Stillstand-Strafe<input id="ri" type="number" step=".1" value=".5"></label>
+<label>Abweichung von Mitte (Strafe)<input id="rd" type="number" step=".1" value=".5"></label><small id="rwarn" style="color:#ffb020;display:none;margin-top:8px;line-height:1.45"></small></details></div>
+<div><canvas id="sc" width="1000" height="640"></canvas><div class="pan" style="margin-top:8px"><div id="sens" style="font:12px monospace"></div></div></div>
+<div><div class="pan"><div class="kp" id="kp"></div><canvas id="ch" width="320" height="80" style="width:100%;margin-top:8px"></canvas><small style="color:var(--m)">Erfolgsquote über das gesamte Training (gleitend, 50 Episoden; ältere Abschnitte je 100 Episoden zusammengefasst)</small></div>
+<div class="pan"><h3 style="margin:0 0 8px">Q-Learning analysieren – Warum ist das eine KI?</h3><div class="kp" id="an"></div><p id="ae" style="font-size:12px;color:var(--m);margin:8px 0">Starte das Training, um die Entscheidungen zu sehen.</p><small style="color:var(--m)">Zustand: Ziffern = Sensor-Klassen (0 nah, 1 mittel, 2 weit), nach | die Zielrichtung. Neuer Q-Wert = alter + α·(Reward + γ·bester Folgewert − alter).</small><h4 style="margin:12px 0 4px">Q-Tabelle (zuletzt aktualisierte Zustände)</h4><div class="tw"><table id="qt"></table></div><h4 style="margin:12px 0 4px">Lernprotokoll</h4><div id="log"></div></div></div></div></section>
+
+<section id="pl"><div class="row" style="justify-content:flex-start"><button class="pri" id="lGo">Starten</button><button id="lRe">Neu starten</button><button onclick="labExit()">Zur Parameterauswahl</button><span class="seg" title="Tempo des Lernens"><button id="lSlow" class="sel">Zeitlupe</button><button id="lFast">Schnell</button></span><small id="lSpd" style="color:var(--m)"></small></div>
+<div class="g3"><div class="pan"><h3 id="lt" style="margin-top:0"></h3><div id="le" style="font-size:13px;line-height:1.5"></div><label id="ll">Wert einstellen</label><input type="range" id="ls"><b id="lv" style="font-size:20px"></b>
+<details><summary>Weitere Einstellungen</summary><div id="lo" style="opacity:.5"></div><small>Die Strecke ist fest eingestellt. Das Tempo (Zeitlupe/Schnell) wählst du oben.</small></details></div>
+<div><canvas id="lc" width="1000" height="640" style="width:100%;background:#0f1218;border-radius:10px"></canvas><div class="pan kp" id="lk" style="margin-top:8px"></div></div>
+<div class="pan"><h4 style="margin:0 0 6px">Q-Tabelle live</h4><p id="lm" style="font-size:12px;color:var(--m)"></p><div class="tw"><table id="lq"></table></div></div></div></section>
+<section id="dj"><div class="row" style="justify-content:flex-start"><button class="pri" id="jGo">Duell pausieren</button><button id="jEnd">Duell beenden</button><button class="pri" id="jRetry" hidden>Erneut versuchen – mit anderen Einstellungen</button><button id="jBack" hidden>Zurück</button><label style="display:inline-flex;gap:6px;align-items:center">Tempo <input type="range" id="jS" min="1" max="100" value="20" style="width:120px"></label></div><div id="jt" style="font-size:12px;color:var(--m);margin:4px 0"></div><div class="two2"><div id="jA" class="pan"></div><div id="jB" class="pan"></div></div><div id="jr"></div></section>
+<section id="rpv"><button onclick="back()">← Zurück zur Trainingsansicht</button><canvas id="fc" class="v" width="800" height="450"></canvas>
+<div class="row"><button id="rpPlay">Abspielen / Pause</button><button id="rpD" hidden>Debug: aus</button><button id="rpAgain">Erneut</button><input id="rpT" type="range" min="0" max="1" value="0" style="width:300px"><span id="rpTime"></span>
+<select id="rpS"><option value=".5">0,5×<option value="1" selected>1×<option value="2">2×<option value="4">4×</select></div><small style="display:block;text-align:center;color:var(--m)">Wiedergabe der tatsächlich gespeicherten Fahrt – keine Q-Updates.</small></section>
+
+<section id="race"><button onclick="back()">← Zurück</button><div class="row"><b id="rinfo"></b><button class="pri" id="rGo">Rennen starten</button></div>
+<canvas id="rc2" class="v" width="1000" height="640" style="background:#0f1218"></canvas>
+<details id="drv" class="hud"><summary>Fahrerklärung</summary><div style="margin-top:6px;line-height:1.45"><b>Steuerung</b><br>W / B: Gas · S: Bremsen / Rückwärts · A / D: Lenken · Pfeiltasten: alternativ<br><b>Ablauf</b><br>Erreiche die Ziellinie. Deine Zeit wird gemessen. Das halbtransparente Auto ist die KI mit ihrer gespeicherten besten Fahrt. Zeit und KI starten erst, wenn du zum ersten Mal Gas gibst. Am Ende werden beide Zeiten verglichen.</div></details>
+<div id="hud" class="hud"><div><small>DEINE ZEIT</small><b id="hT">00:00,00</b></div><div><small>KI-ZEIT</small><b id="hK">–</b></div></div><div id="rai" class="hud" style="left:50%;top:60px;transform:translateX(-50%);display:none;border-color:var(--a);font-weight:600">Die KI hat das Ziel erreicht. Fahre weiter und versuche, ihre Zeit zu schlagen!</div><div id="rh" class="hud" style="left:50%;top:110px;transform:translateX(-50%);display:none">Drücke W – deine Zeit und die KI starten gleichzeitig</div><div id="cd" class="ov"></div><div id="rs" class="ov"></div>
+<p style="text-align:center;color:var(--m)">Steuerung: W oder B = Gas · S = Bremsen · A/D = Lenken (Pfeiltasten auch möglich)</p></section>
+
+<div id="ed"><canvas id="ec"></canvas><div class="tb"><label style="color:var(--m);font-size:12px">Straßenbreite<br><input id="ew" type="range" min="44" max="110" value="60" oninput="edDraw()" style="width:140px"></label><button onclick="edUndo()">Rückgängig</button><button onclick="ep=[];edDraw()">Löschen</button><button onclick="edClose()">Abbrechen</button><button class="pri" onclick="edFinish()">Zeichnen beenden</button></div><div class="hint">Halte die linke Maustaste gedrückt und zeichne deine eigene Rennstrecke.</div></div>
+<div id="mm" class="mdl"><div class="pan"><h3 style="margin-top:0">Weitertrainieren</h3><div id="mi" style="font-size:13px;margin-bottom:8px"></div><label>Zusätzliche Episoden<select id="mx"><option>100<option>500<option selected>1000<option>5000<option>10000<option value="c">Eigene Anzahl</select></label><input id="mc" type="number" min="1" placeholder="Eigene Anzahl" style="display:none;margin-top:6px"><div class="row"><button class="pri" id="mOk">Weitertrainieren</button><button onclick="mdl('mm',0)">Abbrechen</button></div></div></div>
+<div id="fm" class="mdl"><div class="pan" style="width:min(900px,96vw);max-height:92vh;overflow:auto"><div class="row" style="justify-content:space-between"><b>Fehleranalyse</b><button onclick="FA=null;mdl('fm',0)">Schließen</button></div><div id="fb"></div></div></div>
+<div id="dm" class="mdl"><div class="pan" style="width:min(720px,96vw);max-height:92vh;overflow:auto"><div class="row" style="justify-content:space-between"><b>Was denkt die KI gerade?</b><button onclick="mdl('dm',0)">Schließen</button></div><div id="db" style="font-size:13px;line-height:1.5"></div></div></div>
+<div id="po" class="mdl"><div class="pan" style="width:min(900px,96vw)"><div class="row" style="justify-content:space-between"><b>Welchen Parameter möchtest du untersuchen?</b><button onclick="mdl('po',0)">Schließen</button></div><div class="pgrid" id="pg2"></div><div class="row"><button class="pri" id="pGo" disabled>Parameter untersuchen</button></div></div></div>
+<div id="ma" class="mdl"><div class="pan" style="width:min(560px,96vw)"><div class="row" style="justify-content:space-between"><b>Analyse</b><button onclick="mdl('ma',0)">Schließen</button></div><div class="row"><button id="bDec" disabled>KI-Entscheidung untersuchen</button><button id="bFail" disabled>Fehleranalyse anzeigen</button></div><small style="color:var(--m)">Verfügbar, sobald das Training pausiert oder beendet ist (Entscheidung auch während des Trainings).</small></div></div>
+<div id="mb" class="mdl"><div class="pan" style="width:min(560px,96vw)"><div class="row" style="justify-content:space-between"><b>Beste Fahrt &amp; Rennen</b><button onclick="mdl('mb',0)">Schließen</button></div><div class="row"><button id="bBest" disabled>Beste Fahrt (First-Person)</button><button id="bRace" disabled>Rennen gegen die KI</button></div><small style="color:var(--m)">Verfügbar nach der ersten erfolgreichen Fahrt.</small></div></div>
+<div id="ko" class="mdl"><div class="pan" style="width:min(900px,96vw);max-height:92vh;overflow:auto"><div class="row" style="justify-content:space-between"><b>KI gegen KI – welchen Parameter vergleichen?</b><button onclick="mdl('ko',0)">Schließen</button></div><div class="pgrid" id="kg"></div>
+<div id="kv" style="display:none"><label>KI A: <b id="kav"></b><input type="range" id="ka"></label><label>KI B: <b id="kbv"></b><input type="range" id="kb"></label><div class="row"><button id="kSug">Vorgegebene Werte</button></div><label>Strecke<select id="ks"></select></label><label>Episoden<select id="kn"><option>100<option selected>500<option>1000<option>5000</select></label><label>Zufallsbasis<select id="kr"><option value="same" selected>Gleich für beide KIs (fairer Vergleich)<option value="diff">Unterschiedlich (zeigt den Einfluss des Zufalls)</select></label><small style="color:var(--m)">Alle anderen Einstellungen sind für beide KIs identisch. Beide starten mit leerer Q-Tabelle. Jedes Duell bekommt eine neue Zufallsbasis – so liefert eine Wiederholung ein unabhängiges Ergebnis.</small><div class="row"><button class="pri" id="kGo">Duell starten</button></div></div></div></div>
+<div id="bv" class="mdl"><div class="pan" style="width:min(1100px,96vw)"><div class="row" style="justify-content:space-between"><b>Beste Fahrten im Vergleich</b><button onclick="BV=null;mdl('bv',0)">Schließen</button></div><div class="two2"><div><canvas id="bA" width="500" height="320" style="width:100%;border-radius:8px"></canvas><div id="bAt"></div></div><div><canvas id="bB" width="500" height="320" style="width:100%;border-radius:8px"></canvas><div id="bBt"></div></div></div><div class="row"><button id="bvP">Pause</button><button id="bvR">Erneut</button></div><div id="bvS" style="font-weight:600;text-align:center"></div></div></div>
+<div id="ow" class="mdl"><div class="pan" style="width:min(540px,94vw)"><h3 style="margin-top:0">Es existiert bereits ein gespeicherter Trainingsstand.</h3><p style="font-size:14px;line-height:1.5;color:#c3c9d8;margin:0 0 8px">Wenn du ein neues Training startest, kann dein bisheriger Speicherstand überschrieben werden. Möchtest du fortfahren?</p><small id="owInfo" style="color:var(--m)"></small><div class="row" style="justify-content:flex-end;margin-top:14px"><button id="owNo">Abbrechen</button><button id="owExp">Vorher exportieren (.json)</button><button class="pri" id="owOk">Vorhandenen Speicherstand überschreiben</button></div></div></div>
+<div id="mv" class="mdl"><div class="pan" style="width:min(580px,94vw)"><h3 style="margin-top:0">Älterer Speicherstand</h3><p style="font-size:14px;line-height:1.5;color:#c3c9d8;margin:0 0 8px">Dieser Trainingsstand wurde mit einer älteren Lernlogik erstellt. Inzwischen wird eine Fahrt, die wegen Stillstand abgebrochen wird, wie ein Crash bestraft. Die gespeicherten Q-Werte passen deshalb nicht genau zur neuen Belohnung. Für einen sauberen Vergleich ist ein neues Training nötig. Du kannst den alten Stand vorher sichern oder ihn trotzdem laden.</p><small id="mvInfo" style="color:var(--m)"></small><div class="row" style="justify-content:flex-end;margin-top:14px"><button id="mvNo">Abbrechen</button><button id="mvExp">Alten Stand exportieren</button><button class="pri" id="mvOk">Trotzdem laden</button></div></div></div>
+<div id="im" class="mdl"><div class="pan" style="width:min(560px,94vw)"><h3 style="margin-top:0">Speicherstand importieren?</h3><p style="font-size:14px;line-height:1.5;color:#c3c9d8;margin:0 0 8px">Es existiert bereits ein Trainingsstand. Beim Import wird er durch die Datei ersetzt. Exportiere ihn vorher, wenn du ihn behalten möchtest.</p><small id="imInfo" style="color:var(--m);line-height:1.6"></small><div class="row" style="justify-content:flex-end;margin-top:14px"><button id="imNo">Abbrechen</button><button id="imExp">Vorhandenen Stand exportieren</button><button class="pri" id="imOk">Importieren und ersetzen</button></div></div></div>
+<div id="code" class="pan"></div>
+<div id="wm"><div class="pan" style="text-align:center"><b id="wt"></b><br><canvas id="wc" width="320" height="320"></canvas><div id="wv" style="font-size:42px;font-weight:800;min-height:56px"></div><div class="row"><button class="pri" id="wSpin">Drehen</button><button id="wOk" disabled>Wert übernehmen</button><button onclick="wClose()">Abbrechen</button></div></div></div><div id="toast"></div>
+
+<script>
+"use strict";
+// ===== Hilfen =====
+const $=id=>document.getElementById(id),W=1000,H=640,V=3,MAXSTEPS=1500,ACT=["Stark links","Leicht links","Geradeaus","Leicht rechts","Stark rechts"],TURN=[-.09,-.045,0,.045,.09];
+let page="home",mode="home";
+function show(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));page=id;if(id==="home")mode="home";dbgReset()}
+function toast(t){if(NOTOAST)return;const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2500)}
+const rnd=n=>Math.floor(Math.random()*n);
+// ===== Strecken =====
+const PRE=[{id:"einfach",n:"Flitzpiepen-Ring",d:"Einfach",w:100,t:"Breit, lange Gerade, große Radien.",c:[[80,540],[400,570],[800,540],[930,380],[820,200],[500,110],[200,140]]},
+{id:"mittel",n:"Omega-Schleife",d:"Mittel",w:72,t:"S-Kurven und wechselnde Radien.",c:[[60,540],[300,510],[450,380],[300,250],[450,110],[700,90],[850,220],[700,370],[900,510],[950,580]]},
+{id:"schwer",n:"Nervenflatter Grand Prix",d:"Schwierig",w:52,t:"Enge Kurven, S-Kurven, Haarnadel.",c:[[60,580],[500,600],[880,550],[940,420],[700,380],[420,430],[260,340],[480,240],[820,230],[950,120],[600,60],[250,90],[80,220]]}];
+function cat(c){const o=[],n=c.length;for(let i=0;i<n-1;i++){const a=c[Math.max(i-1,0)],b=c[i],d=c[i+1],e=c[Math.min(i+2,n-1)];for(let t=0;t<1;t+=.05){const f=(k)=>.5*((2*b[k])+(-a[k]+d[k])*t+(2*a[k]-5*b[k]+4*d[k]-e[k])*t*t+(-a[k]+3*b[k]-3*d[k]+e[k])*t*t*t);o.push({x:f(0),y:f(1)})}}o.push({x:c[n-1][0],y:c[n-1][1]});return o}
+function rs(p,s){const o=[{x:p[0].x,y:p[0].y}];for(let i=1;i<p.length;i++){let a=o[o.length-1];const b=p[i];let l=Math.hypot(b.x-a.x,b.y-a.y);while(l>=s){const t=s/l;a={x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};o.push(a);l=Math.hypot(b.x-a.x,b.y-a.y)}}return o}
+let T=null,mask=null,roadC=null;
+function setTrack(name,w,pts){const p=rs(pts,5);T={name,w,p,id:trackHash(p,w),a0:Math.atan2(p[3].y-p[0].y,p[3].x-p[0].x),ideal:idealLine(p,w)};
+ const m=document.createElement("canvas");m.width=W;m.height=H;const x=m.getContext("2d");x.lineCap=x.lineJoin="round";x.lineWidth=w;x.strokeStyle="#fff";x.beginPath();p.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();
+ const d=x.getImageData(0,0,W,H).data;mask=new Uint8Array(W*H);for(let i=0;i<W*H;i++)mask[i]=d[i*4+3]>128?1:0;
+ roadC=document.createElement("canvas");roadC.width=W;roadC.height=H;const r=roadC.getContext("2d");r.fillStyle="#1b2a1f";r.fillRect(0,0,W,H);r.lineCap=r.lineJoin="round";
+ const path=()=>{r.beginPath();p.forEach((q,i)=>i?r.lineTo(q.x,q.y):r.moveTo(q.x,q.y));r.stroke()};r.lineWidth=w+8;r.strokeStyle="#e8ebf2";path();r.lineWidth=w;r.strokeStyle="#3a3f4b";path();
+ r.setLineDash([14,18]);r.lineWidth=2;r.strokeStyle="#ffffff55";path();r.setLineDash([]);
+ for(const [q,c] of [[p[0],"#2ecc71"],[p[p.length-1],"#ff2d3d"]]){const i=p.indexOf(q),b=p[Math.min(i+(c==="#ff2d3d"?-1:1),p.length-1)]||q,a=Math.atan2(b.y-q.y,b.x-q.x)+Math.PI/2;r.strokeStyle=c;r.lineWidth=8;r.beginPath();r.moveTo(q.x-Math.cos(a)*w/2,q.y-Math.sin(a)*w/2);r.lineTo(q.x+Math.cos(a)*w/2,q.y+Math.sin(a)*w/2);r.stroke()}}
+// F5: stabile Strecken-ID aus der Geometrie (64 Punkte gleichmäßig entlang der Strecke von Start bis Ziel, 4-px-Raster, Breite, Länge)
+function trackSamp(p){const L=[0];for(let i=1;i<p.length;i++)L.push(L[i-1]+Math.hypot(p[i].x-p[i-1].x,p[i].y-p[i-1].y));const tot=L[L.length-1],o=[];let j=0;
+ for(let k=0;k<=64;k++){const t=tot*k/64;while(j<p.length-2&&L[j+1]<t)j++;const u=Math.min(1,Math.max(0,(t-L[j])/((L[j+1]-L[j])||1)));o.push([p[j].x+(p[j+1].x-p[j].x)*u,p[j].y+(p[j+1].y-p[j].y)*u])}return{o,tot}}
+function trackHash(p,w){const S=trackSamp(p),s=[Math.round(w),Math.round(S.tot/10)];for(const q of S.o)s.push(Math.round(q[0]/4),Math.round(q[1]/4));
+ const str=s.join(",");let h1=0x811c9dc5,h2=0x9e3779b9;for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);h1=Math.imul(h1^c,16777619);h2=Math.imul(h2^c,2246822507)}return"t"+(h1>>>0).toString(16).padStart(8,"0")+(h2>>>0).toString(16).padStart(8,"0")}
+const road=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&mask[(y|0)*W+(x|0)]===1;
+function validate(p,w){if(p.length<60)return"Die Strecke ist zu kurz.";for(let i=0;i<p.length;i+=2)for(let j=i+Math.ceil(w*1.3/5)+12;j<p.length;j+=2)if(Math.hypot(p[i].x-p[j].x,p[i].y-p[j].y)<w*.9)return"Die Strecke überschneidet sich oder ist zu eng. Zeichne sie ohne Kreuzungen.";return null}
+function preview(cv,pts,w){const x=cv.getContext("2d");x.clearRect(0,0,cv.width,cv.height);x.lineCap=x.lineJoin="round";x.strokeStyle="#7a8296";x.lineWidth=w/3;x.beginPath();pts.forEach((q,i)=>i?x.lineTo(q.x*cv.width/W,q.y*cv.height/H):x.moveTo(q.x*cv.width/W,q.y*cv.height/H));x.stroke()}
+// Bibliothek
+(function(){const c=$("cards");PRE.forEach(t=>{const p=rs(cat(t.c),5),d=document.createElement("div");d.className="card";d.innerHTML=`<h3 style="margin:4px 0 8px">${t.n}</h3><canvas width="300" height="190"></canvas><div style="margin-top:8px">Länge ≈ ${Math.round(p.length*5/10)} m</div><b style="color:var(--a)">${t.d}</b><p style="color:var(--m)">${t.t}</p><button class="pri">Wählen</button>`;c.appendChild(d);preview(d.querySelector("canvas"),p,t.w);d.querySelector("button").onclick=()=>{setTrack(t.n,t.w,p);openSim()}});
+ const d=$("drawblk");d.className="drawb";d.innerHTML='<svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="#ff2d3d" stroke-width="1.6" stroke-linejoin="round"><path d="M3 21l3.5-1 12-12-2.5-2.5-12 12L3 21z"/><path d="M14.5 6.5l3 3"/></svg><h3 style="margin:10px 0 4px">Eigene Rennstrecke zeichnen</h3><p style="color:var(--m);margin:0">Gestalte deinen eigenen Rennkurs und fordere die KI heraus.</p>';d.onclick=edOpen})();
+// ===== Editor =====
+let ep=[],drawing=false;const ec=$("ec"),ex=ec.getContext("2d");
+function edOpen(){$("ed").style.display="block";(document.documentElement.requestFullscreen||(()=>0)).call(document.documentElement)?.catch?.(()=>0);ec.width=innerWidth;ec.height=innerHeight;ep=[];edSt.out=false;edSt.lost=false;edDraw()}
+function edClose(){$("ed").style.display="none";if(document.fullscreenElement)document.exitFullscreen()}
+function edDraw(){ex.fillStyle="#0b0d12";ex.fillRect(0,0,ec.width,ec.height);ex.lineCap=ex.lineJoin="round";ex.strokeStyle="#3a3f4b";ex.lineWidth=+$("ew").value/Math.min(W/ec.width,H/ec.height);ex.beginPath();ep.forEach((q,i)=>i?ex.lineTo(q.x,q.y):ex.moveTo(q.x,q.y));ex.stroke();ex.strokeStyle="#ffffff88";ex.lineWidth=2;ex.stroke();edFrame()}
+const edSt={out:false,lost:false};
+ec.onpointerdown=e=>{if(e.button)return;ec.setPointerCapture(e.pointerId);drawing=true;edSt.lost=false;edAccept(ep,edSt,e.clientX,e.clientY,ec.width,ec.height,+$("ew").value);edDraw()};
+ec.onpointermove=e=>{if(!drawing)return;edAccept(ep,edSt,e.clientX,e.clientY,ec.width,ec.height,+$("ew").value);edDraw()};
+ec.onpointerup=()=>{drawing=false;edSt.out=false;edDraw()};
+function edUndo(){ep.splice(Math.max(0,ep.length-25));edDraw()}
+function edFinish(){if(ep.length<20){toast("Bitte zeichne zuerst eine Strecke.");return}
+ const B=edBuild(ep,ec.width,ec.height,+$("ew").value);let p=B.p;if(B.out){toast("Deine Strecke liegt außerhalb des Zeichenbereichs. Bitte korrigiere den Streckenverlauf.");return}
+ const w=+$("ew").value,err=validate(p,w);if(err){toast(err);return}let mr=1e9;for(let i=8;i<p.length-8;i+=4){const a=p[i-8],b=p[i],c2=p[i+8],A=Math.hypot(b.x-c2.x,b.y-c2.y),B=Math.hypot(a.x-c2.x,a.y-c2.y),C=Math.hypot(a.x-b.x,a.y-b.y),K=Math.abs((b.x-a.x)*(c2.y-a.y)-(c2.x-a.x)*(b.y-a.y))/2;if(K>1)mr=Math.min(mr,A*B*C/(4*K))}
+ const warn=mr<40?"Achtung: Eine Kurve ist sehr eng (Radius ≈ "+Math.round(mr)+" px), das Auto kann sie vermutlich kaum befahren. Zeichne sie etwas großzügiger. ":"";
+ setTrack("Eigene Strecke",w,p);edClose();toast(warn+"Deine Strecke wurde erstellt. Start (grün) und Ziel (rot) liegen an den Enden.");openSim()}
+// ===== Q-Learning =====
+let agg=[],aggStart=0,aggCur={n:0,ok:0,rew:0}; // F4: ältere Episoden je 100 zusammengefasst ([erfolgreich, Reward-Summe])
+let Q=new Map(),P,st="idle",c,S,sn=[],eps=1,epN=0,ok=0,fail=0,hist=[],best=null,rec=[],epRew=0,sumRew=0,sumSteps=0,maxIdx=0,last=null,logs=[],recent=[],okSteps=0;
+const getQ=k=>{let q=Q.get(k);if(!q){q=[0,0,0,0,0];Q.set(k,q)}return q};
+function readP(){const g=i=>parseFloat($(i).value);return{a:g("pa"),g:g("pg"),e:g("pe"),d:g("pd"),n:parseInt($("pn").value),rg:g("rg"),rc:g("rc"),rp:g("rp"),ri:g("ri"),rd:g("rd")}}
+function sense(c){return[-90,-45,0,45,90].map(d=>{const a=c.a+d*Math.PI/180;let r=0;while(r<120&&road(c.x+Math.cos(a)*r,c.y+Math.sin(a)*r))r+=3;return r})}
+const binS=v=>v<35?0:v<70?1:2;
+function keyOf(c){sn=sense(c);const g=T.p[T.p.length-1];let ga=Math.atan2(g.y-c.y,g.x-c.x)-c.a;while(ga>Math.PI)ga-=2*Math.PI;while(ga<-Math.PI)ga+=2*Math.PI;const gb=ga<-1?0:ga<-.3?1:ga<.3?2:ga<1?3:4;return sn.map(binS).join("")+"|"+gb}
+function nearest(c){let bi=c.i,bd=1e9;const lo=Math.max(0,c.i-5),hi=Math.min(T.p.length-1,c.i+40);for(let i=lo;i<=hi;i++){const d=Math.hypot(T.p[i].x-c.x,T.p[i].y-c.y);if(d<bd){bd=d;bi=i}}return[bi,bd]}
+function resetCar(){c={x:T.p[0].x,y:T.p[0].y,a:T.a0,i:0,steps:0};rec=[];epLog=[];epRew=0}
+function stepCar(c,act){c.a+=TURN[act];c.x+=Math.cos(c.a)*V;c.y+=Math.sin(c.a)*V;c.steps++;const old=c.i,[i,d]=nearest(c);c.i=i;
+ if(!road(c.x,c.y))return{r:-P.rc,done:true,win:false};
+ if(i>=T.p.length-3)return{r:P.rg,done:true,win:true};
+ let r=(i-old)*P.rp-.1-P.rd*(d/(T.w/2));if(i<=old)r-=P.ri;return{r,done:false}}
+const best_=q=>{let m=Math.max(...q),ix=[];q.forEach((v,i)=>v===m&&ix.push(i));return ix[rnd(ix.length)]};
+function trainStep(){ // Zustand -> Aktion (epsilon-greedy) -> Bewegung -> Reward -> Q-Update
+ const q=getQ(S),ch=chooseAction(q,P.eps_),ex=ch.ex,a=ch.a,oldv=q[a],before=q.slice(),sens=sn.slice(),sk=S;
+ const c0={...c};let res=stepCar(c,a);if(c.i>(c.bi||0)){c.bi=c.i;c.bs=c.steps}
+ if(!res.done&&c.steps-(c.bs||0)>=1500)res={r:-P.rc,done:true,win:false,stall:true}; // P07: Stillstand beendet die Episode wie ein Crash (Endzustand, kein Zukunftswert)
+ const s2=keyOf(c),nmax=Math.max(...getQ(s2)),tgt=res.done?res.r:res.r+P.g*nmax,nv=oldv+P.a*(tgt-oldv);
+ if(!Number.isFinite(res.r)||!Number.isFinite(oldv)||(!res.done&&!Number.isFinite(nmax))||!Number.isFinite(tgt)||!Number.isFinite(nv)){Object.assign(c,c0);keyOf(c); // F1: ungültiger Schritt wird verworfen, Q-Tabelle bleibt unverändert
+  trainAbort(!Number.isFinite(res.r)?`Ungültiger Reward-Wert (${res.r}) in Episode ${epN+1}. Bitte prüfe die Reward-Gewichte.`:`Ungültiger Q-Wert im Zustand ${sk} (alt ${oldv}, Ziel ${tgt}).`);return}
+ q[a]=nv;
+ last={sk,sens,a,ex,before,old:oldv,r:res.r,tgt,nw:q[a]};epLog.push([a,+res.r.toFixed(1),sens.map(v=>v|0),sk,ex?1:0,before.map(v=>+v.toFixed(2))]);if(epLog.length>80)epLog.shift();epRew+=res.r;rec.push(+c.x.toFixed(1),+c.y.toFixed(1),+c.a.toFixed(3));maxIdx=Math.max(maxIdx,c.i);
+ recent.unshift(sk);recent=[...new Set(recent)].slice(0,10);
+ logs.unshift(`Ep ${epN+1}: Zustand ${sk} · ${ex?"Exploration":"Exploitation"} → ${ACT[a]} · r=${res.r.toFixed(1)} · Q ${oldv.toFixed(2)}→${q[a].toFixed(2)}`);logs.length=Math.min(logs.length,8);
+ S=s2;if(res.done||c.steps>=maxSteps())endEp(res.win===true,res.win?"win":res.stall?"stall":res.done?"off":"time")}
+function endEp(win,why){epN++;win?ok++:fail++;if(!win&&!LAB){fails.unshift({ep:epN,why,steps:c.steps,prog:Math.round(c.i/(T.p.length-1)*100),rec:rec.slice(-240),log:epLog.slice(),path:pathOf(rec)});fails.length=Math.min(fails.length,8)}hist.push(win?1:0);sumRew+=epRew;sumSteps+=c.steps;
+ if(!LAB){aggCur.n++;if(win)aggCur.ok++;if(aggCur.rew!==null)aggCur.rew+=epRew;if(aggCur.n>=100){agg.push([aggCur.ok,aggCur.rew===null?null:+aggCur.rew.toFixed(1)]);aggCur={n:0,ok:0,rew:0}}if(hist.length>4000)hist.splice(0,hist.length-2000)} // F4: Langzeitstatistik, Detailhistorie begrenzt
+ if(win){okSteps++;if(!best||c.steps<best.steps){best={steps:c.steps,rec:rec.slice()};$("bBest").disabled=$("bRace").disabled=false;toast("Glückwunsch! Das Auto hat das Ziel erreicht. Beste Fahrt gespeichert.")}}
+ P.eps_=Math.max(.05,P.eps_*P.d);if(epN%50===0||win||maxIdx>savedMax)persist();
+ if(epN>=P.n){finish();return}resetCar();S=keyOf(c)}
+function pathOf(r){const n=r.length/3,k=Math.max(1,Math.ceil(n/300)),o=[];for(let i=0;i<n;i+=k)o.push(Math.round(r[i*3]),Math.round(r[i*3+1]));if(n)o.push(Math.round(r[(n-1)*3]),Math.round(r[(n-1)*3+1]));return o} // P11: verkleinerte Gesamtfahrt (max. ~300 Punkte) für die blasse Darstellung
+function finish(){st="done";setPU(false);persist();$("bPause").disabled=true;$("bMore").disabled=false;toast(ok?"Das Training ist beendet.":"Die KI hat das Ziel innerhalb der bisherigen Trainingsversuche noch nicht erreicht.")}
+// ===== Sim-UI =====
+const IN=["pa","pg","pe","pd","pn","rg","rc","rp","ri","rd"];
+function lock(l){IN.forEach(i=>$(i).disabled=l);document.querySelectorAll(".wb").forEach(b=>b.disabled=l)}
+function openSim(){show("sim");mode="sim";st="idle";SAVE_OWNED=false;saveMV=MV;savedMax=0;agg=[];aggStart=0;aggCur={n:0,ok:0,rew:0};Q=new Map();epN=ok=fail=sumRew=sumSteps=maxIdx=okSteps=0;hist=[];best=null;logs=[];recent=[];last=null;sn=[];fails=[];lock(false);P=readP();P.eps_=P.e;resetCar();$("bGo").disabled=false;$("bGo").textContent="Training starten";setPU(false);["bPause","bMore","bBest","bRace"].forEach(i=>$(i).disabled=true)}
+function leave(){if(st==="training")pause();show("lib");mode="lib"}
+// ===== F1: Eingabevalidierung (bestehende Grenzen; Reward-Felder: nur gültige endliche Zahl) =====
+const VAL={pa:["Lernrate α",.01,1],pg:["Discount-Faktor γ",0,.99],pe:["Exploration ε",.05,1],pd:["Explorationsabnahme",.9,1],pn:["Episoden",1,Infinity],rg:["Belohnung für Zielerreichung"],rc:["Strafe für Verlassen der Straße"],rp:["Belohnung für Fortschritt"],ri:["Stillstand-Strafe"],rd:["Abweichung von Mitte (Strafe)"]};
+const fmtN=v=>String(v).replace(".",",");
+function validateInputs(){IN.forEach(i=>$(i).classList.remove("bad"));
+ for(const id of IN){const el=$(id),[nm,lo,hi]=VAL[id],raw=String(el.value).trim();let why=null;
+  if(el.validity&&el.validity.badInput)why="enthält ungültige Zeichen";else if(raw==="")why="ist leer";else if(!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(raw))why="enthält ungültige Zeichen";
+  else{const v=Number(raw);if(!Number.isFinite(v))why="enthält keinen endlichen Zahlenwert";else if(id==="pn"&&!Number.isInteger(v))why="muss eine ganze Zahl sein";else if(lo!==undefined&&(v<lo||v>hi))why=`liegt außerhalb des erlaubten Bereichs (${fmtN(lo)} bis ${hi===Infinity?"∞":fmtN(hi)})`}
+  if(why){el.classList.add("bad");const d=el.closest("details");if(d)d.open=true;el.focus();return{ok:false,id,msg:`Deine Trainingsparameter sind noch nicht vollständig. Bitte überprüfe das Feld „${nm}“ – es ${why}.`}}}
+ return{ok:true}}
+IN.forEach(i=>$(i).addEventListener("input",()=>$(i).classList.remove("bad")));
+// P19: Warnung bei negativen Reward-Werten (keine Begrenzung – Experimente bleiben möglich)
+function rwUpd(){const t=[["rg","Ziel erreicht","Das Erreichen des Ziels wird bestraft."],["rp","Fortschritt","Vorwärtsfahren wird bestraft."],["rc","Straße verlassen","Das Verlassen der Straße wird belohnt."],["ri","Stillstand-Strafe","Trödeln ohne Fortschritt wird belohnt."],["rd","Abweichung von Mitte","Fahren am Rand wird belohnt."]].filter(a=>parseFloat($(a[0]).value)<0).map(a=>`„${a[1]}“ ist negativ: ${a[2]}`);const e=$("rwarn");e.innerHTML=t.join("<br>");e.style.display=t.length?"block":"none"}
+["rg","rp","rc","ri","rd"].forEach(i=>$(i).addEventListener("input",rwUpd));
+function toastForce(t){const n=NOTOAST;NOTOAST=false;toast(t);NOTOAST=n}
+function trainAbort(msg){ // F1: kontrolliert pausieren, gültigen Lernstand behalten
+ if(DU){DU.run=false;djBtns()}else if(LAB&&LAB.k){LAB.run=false;$("lGo").textContent="Fortsetzen"}else{st="paused";setPU(true)} // kein persist(): der letzte gültige Speicherstand bleibt unangetastet
+ const e=$("toast");toastForce("Training pausiert: "+msg);clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",7000)}
+// ===== F2: Überschreibschutz =====
+const MV=2;let SAVE_OWNED=false,savedMax=0,saveMV=MV,MVP=null; // MV: Version der Lernlogik (2 = mit Stillstands-Endstrafe, P07) // darf die aktuelle Trainingseinheit q1save schreiben?
+// P01: prüft einen Speicherstand vollständig (Strecke, Parameter, Q-Tabelle, Zähler, beste Fahrt, Fehlversuche)
+const fin=Number.isFinite;
+function saveOk(d){if(!d||typeof d!=="object"||d.v!==1||typeof d.tn!=="string"||!fin(d.w)||d.w<=0)return false;
+ if(!Array.isArray(d.p)||d.p.length<2||!d.p.every(q=>Array.isArray(q)&&fin(q[0])&&fin(q[1])))return false;
+ if(!d.P||typeof d.P!=="object"||!["a","g","e","d","n","rg","rc","rp","ri","rd","eps_"].every(k=>fin(d.P[k])))return false;
+ if(!d.q||typeof d.q!=="object"||Array.isArray(d.q)||!Object.values(d.q).every(a=>Array.isArray(a)&&a.length===5&&a.every(fin)))return false;
+ if(!Number.isInteger(d.epN)||d.epN<0||!fin(d.ok)||!fin(d.fail)||!Array.isArray(d.hist))return false;
+ if(d.best!=null&&(!fin(d.best.steps)||!Array.isArray(d.best.rec)||d.best.rec.length<3))return false;
+ if(d.fails!==undefined&&!Array.isArray(d.fails))return false;return true}
+function readSave(raw){try{const d=JSON.parse(raw===undefined?localStorage.getItem("q1save"):raw);return saveOk(d)?d:null}catch(e){return null}}
+const hasValidSave=()=>!!readSave();
+$("bGo").onclick=()=>{if(st!=="idle")return;const d=!SAVE_OWNED&&readSave();if(d){$("owInfo").textContent=`Gespeichert: ${d.tn} · ${d.epN} Episoden · ${d.ok} erfolgreich`;mdl("ow",1);return}startTraining()};
+$("owOk").onclick=()=>{mdl("ow",0);startTraining()};$("owExp").onclick=()=>exportSave();$("owNo").onclick=()=>{mdl("ow",0);toast("Abgebrochen – dein Speicherstand bleibt unverändert.")};
+function startTraining(){const v=validateInputs();if(!v.ok){const e=$("toast");toast(v.msg);clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",6000);return}
+ try{const p=readP();if(!["a","g","e","d","n","rg","rc","rp","ri","rd"].every(k=>Number.isFinite(p[k])))throw new Error("Parameter");
+  P=p;P.eps_=p.e;lock(true);st="training";resetCar();S=keyOf(c);if(!c||typeof S!=="string")throw new Error("Init")}
+ catch(e){st="idle";lock(false);toast("Das Training konnte nicht gestartet werden. Dein bisheriger Speicherstand bleibt erhalten.");return}
+ SAVE_OWNED=true; // erst nach erfolgreicher Initialisierung darf gespeichert (überschrieben) werden
+ $("bGo").disabled=true;$("bPause").disabled=false;toast("Das Training beginnt.")}
+function pause(){if(st!=="training")return;st="paused";persist();setPU(true);toast("Training pausiert.")}
+function resume(){if(st==="paused"){st="training";setPU(false)}}
+$("bPause").onclick=()=>st==="paused"?resume():pause();
+const setH=(el,h)=>{if(el._h!==h){el._h=h;el.innerHTML=h}},setT=(el,t)=>{if(el._t!==t){el._t=t;el.textContent=t}}; // F6: identische Inhalte nicht erneut schreiben
+function kpis(){$("bFail").disabled=!(fails.length&&(st==="paused"||st==="done"));$("bDec").disabled=!(st==="paused"||st==="training"||st==="done");$("bMore").disabled=st!=="done";const l100=hist.slice(-100),r=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length*100)+"%":"–";
+ setH($("kp"),[["Episode",`${epN} / ${P.n}`],["Status",{idle:"Bereit",training:"Training",paused:"Pausiert",done:"Beendet"}[st]],["Erfolgreich",ok],["Fehlgeschlagen",fail],["Erfolgsquote",epN?Math.round(ok/epN*100)+"%":"–"],["Letzte 100",r(l100)],["ε (Exploration)",P.eps_.toFixed(3)],["Bester Fortschritt",Math.round(maxIdx/(T.p.length-1)*100)+"%"],["Ø Reward",epN?(sumRew/epN).toFixed(1):"–"],["Ø Fahrtdauer",epN?Math.round(sumSteps/epN)+" Schr.":"–"]].map(a=>`<div>${a[0]}<b>${a[1]}</b></div>`).join(""));
+ drawChart();
+ if(!last){setH($("an"),"");setT($("ae"),Q.size?"Gespeicherter Stand geladen – starte das Training, um weiterzulernen.":"Noch keine Trainingsdaten vorhanden. Starte das Training, damit die KI ihre ersten Erfahrungen sammelt.")}if(last){const q=getQ(last.sk);setH($("an"),[["Zustand",last.sk],["Aktion",ACT[last.a]],["Reward",last.r.toFixed(1)],["Q alt → neu",last.old.toFixed(2)+" → "+last.nw.toFixed(2)],["Zielwert",last.tgt.toFixed(2)],["Gelernte Zustände",Q.size]].map(a=>`<div>${a[0]}<b>${a[1]}</b></div>`).join(""));setT($("ae"),last.ex?"Exploration – das Auto probiert etwas Neues aus.":"Exploitation – das Auto nutzt seine bisherigen Erfahrungen.")}
+ setH($("qt"),"<tr><th>Zustand"+ACT.map(a=>"<th>"+a.replace("Stark ","St. ").replace("Leicht ","L. ")).join("")+"</tr>"+recent.map(k=>{const q=getQ(k),m=Math.max(...q);return`<tr><td>${k}`+q.map(v=>`<td class="${v===m&&m!==0?"mx":""}">${v.toFixed(1)}`).join("")+"</tr>"}).join(""));setH($("log"),logs.join("<br>"));
+ setT($("sens"),sn.length?`Sensor links ${sn[0]|0} · vorne links ${sn[1]|0} · vorne ${sn[2]|0} · vorne rechts ${sn[3]|0} · rechts ${sn[4]|0}`:"")}
+// F4: Diagramm über das gesamte Training – ältere Abschnitte aus 100er-Blöcken, neuere aus der Detailhistorie (gleitend 50)
+function drawChart(){const x=$("ch").getContext("2d"),w=320,h=80;x.clearRect(0,0,w,h);if(!epN||!hist.length&&!agg.length)return;
+ const N=epN,hs=epN-hist.length,X=e=>e/N*w,Y=v=>h-4-v*(h-8),first=Math.min(aggStart,hs);
+ if(first>0){x.save();x.beginPath();x.rect(0,0,X(first),h);x.clip();x.fillStyle="#262c3a";x.fillRect(0,0,X(first),h);x.strokeStyle="#3a4258";x.lineWidth=1;for(let k=-h;k<X(first);k+=6){x.beginPath();x.moveTo(k,h);x.lineTo(k+h,0);x.stroke()}x.restore();x.fillStyle="#8a93a6";x.font="9px system-ui";if(X(first)>46)x.fillText("keine Daten",3,11)}
+ x.strokeStyle="#ff2d3d";x.lineWidth=1;x.beginPath();let pr=false;const pt=(e,v)=>{pr?x.lineTo(X(e),Y(v)):x.moveTo(X(e),Y(v));pr=true};
+ for(let k=0;k<agg.length;k++){const e0=aggStart+k*100;if(e0+100>hs)break;pt(e0+50,agg[k][0]/100)}
+ const stp=Math.max(1,Math.floor(hist.length/300));for(let i=0;i<hist.length;i+=stp){const s=hist.slice(Math.max(0,i-49),i+1);pt(hs+i+1,s.reduce((a,b)=>a+b,0)/s.length)}
+ if(hist.length&&(hist.length-1)%stp){const s=hist.slice(-50);pt(N,s.reduce((a,b)=>a+b,0)/s.length)}x.stroke()}
+function drawCar(x,a0,px,py,a,col,al){x.save();x.globalAlpha=al;x.translate(px,py);x.rotate(a);x.fillStyle=col;x.fillRect(-10,-6,20,12);x.fillStyle="#0b0d12";x.fillRect(1,-4,5,8);x.restore()}
+function drawSim(cv){const x=(cv||$("sc")).getContext("2d");x.drawImage(roadC,0,0);if(showIdeal)drawIdeal(x);if(!cv)drawProgress(x);if(!c)return;const cols=["#ff0","#0ff","#f0f","#0ff","#ff0"];[-90,-45,0,45,90].forEach((d,i)=>{const a=c.a+d*Math.PI/180,r=sn[i]||0;x.strokeStyle=cols[i];x.lineWidth=1.5;x.beginPath();x.moveTo(c.x,c.y);x.lineTo(c.x+Math.cos(a)*r,c.y+Math.sin(a)*r);x.stroke();x.fillStyle=cols[i];x.fillRect(c.x+Math.cos(a)*r-2,c.y+Math.sin(a)*r-2,4,4)});drawCar(x,0,c.x,c.y,c.a,"#ff2d3d",1)}
+let fr=0;const SIM={sig:"",t:0};
+function simSig(){return[st,T&&T.id,T&&T.name,epN,ok,fail,Q.size,showIdeal,maxIdx,c&&c.x,c&&c.y,c&&c.a,last&&last.nw,last&&last.sk,P&&P.eps_,P&&P.n,fails.length,best&&best.steps,logs[0],recent[0],sn.join(",")].join("|")}
+function loop(){requestAnimationFrame(loop);faTick();bvTick();
+ if(page==="sim"){paTick();if(st==="training"){const n=+$("ps").value;for(let i=0;i<n&&st==="training";i++)trainStep()}
+  if(T){if(st==="training"){drawSim();if(++fr%4===0)kpis()}else{const sg=simSig(),now=performance.now();if(sg!==SIM.sig||now-SIM.t>1000){SIM.sig=sg;SIM.t=now;drawSim();kpis()}}}} // F6: außerhalb des Trainings nur bei Änderungen (spätestens 1×/s) neu zeichnen
+ else if(page==="home")homeTick();else if(page==="rpv")rpTick();else if(page==="race")raceTick();else if(page==="pl")labTick();else if(page==="dj")djTick()}
+// ===== Fortschrittsmarkierung (rein visuell, nutzt maxIdx entlang der Mittellinie) =====
+function drawProgress(x){if(!T||!(maxIdx>0))return;const n=T.p.length,done=maxIdx>=n-3,i=Math.min(maxIdx,n-1),a=T.p[Math.max(0,i-2)],b=T.p[Math.min(n-1,i+2)],q=T.p[i];
+ let dx=b.x-a.x,dy=b.y-a.y;const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;const nx=-dy,ny=dx,hw=T.w/2,col=done?"#2ecc71":"#ffb020";
+ const ln=()=>{x.beginPath();x.moveTo(q.x-nx*hw,q.y-ny*hw);x.lineTo(q.x+nx*hw,q.y+ny*hw);x.stroke()};
+ x.save();x.lineCap="butt";x.strokeStyle="#0b0d12";x.lineWidth=8;ln();x.strokeStyle=col;x.lineWidth=5;x.setLineDash([7,5]);ln();x.setLineDash([]);
+ for(const s of[-1,1]){x.fillStyle=col;x.beginPath();x.arc(q.x+nx*hw*s,q.y+ny*hw*s,3.5,0,7);x.fill()}
+ const t=done?"Strecke abgeschlossen":"Bisheriger Bestfortschritt · "+Math.round(maxIdx/(n-1)*100)+" %";x.font="600 12px system-ui,sans-serif";const tw=x.measureText(t).width+12;
+ let sd=1,o=hw+16;for(const s of[1,-1]){const e2=o+(Math.abs(nx)*tw+Math.abs(ny)*20)/2,px=q.x+nx*s*e2,py=q.y+ny*s*e2;if(!road(px,py)&&!road(q.x+nx*s*o,q.y+ny*s*o)){sd=s;break}}
+ const ext=o+(Math.abs(nx)*tw+Math.abs(ny)*20)/2;let cx=q.x+nx*sd*ext,cy=q.y+ny*sd*ext;cx=Math.max(tw/2+4,Math.min(W-tw/2-4,cx));cy=Math.max(14,Math.min(H-14,cy));
+ x.fillStyle="#10131ae6";x.strokeStyle=col;x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(cx-tw/2,cy-10,tw,20,6):x.rect(cx-tw/2,cy-10,tw,20);x.fill();x.stroke();
+ x.fillStyle=col;x.textAlign="center";x.textBaseline="middle";x.fillText(t,cx,cy);x.restore()}
+// ===== Speichern =====
+function persist(manual){if(!T||LAB||!SAVE_OWNED)return;try{localStorage.setItem("q1save",JSON.stringify({v:1,tn:T.name,w:T.w,p:T.p.map(q=>[+q.x.toFixed(1),+q.y.toFixed(1)]),P,q:Object.fromEntries(Q),epN,ok,fail,hist:hist.slice(-2000),best,fails,sumRew,sumSteps,maxIdx,okSteps,st,agg,aggStart,aggCur,tid:T.id,mv:saveMV}));if(!hasValidSave())throw new Error("Prüfung");savedMax=maxIdx;updLoadBtn();if(manual)toast("Speicherstand gespeichert.")}catch(e){updLoadBtn();toast("Speichern fehlgeschlagen (Speicher voll?).")}}
+function updLoadBtn(){const v=hasValidSave(),b=$("bCont");b.disabled=!v;b.title=v?"":"Noch kein Training vorhanden";$("saveHint").style.display=v?"none":"block"} // F3
+function loadSave(dIn,imp,force){const d=dIn||readSave();
+ if(!d){toast("Noch kein gültiger Speicherstand vorhanden.");return false}
+ if(!force&&(d.mv||1)<MV){MVP={d,imp:!!imp};$("mvInfo").textContent=saveInfo(d);$("mvExp").hidden=!!imp;mdl("mv",1);return false} // P07: ältere Lernlogik nie unbemerkt weiterverwenden
+ try{saveMV=d.mv||1;setTrack(d.tn,d.w,d.p.map(q=>({x:q[0],y:q[1]})));if(typeof d.tid==="string")T.id=d.tid;else{const m=matchPreset();if(m)T.id=m}show("sim");mode="sim";P=d.P;Q=new Map(Object.entries(d.q));epN=d.epN;ok=d.ok;fail=d.fail;hist=d.hist;best=d.best;fails=(d.fails||[]).slice(0,8);sumRew=d.sumRew;sumSteps=d.sumSteps;maxIdx=d.maxIdx;okSteps=d.okSteps;logs=[];
+ if(Array.isArray(d.agg)&&Number.isFinite(d.aggStart)&&d.aggCur){agg=d.agg;aggStart=d.aggStart;aggCur=d.aggCur}else{ // F4: älterer Speicherstand – nur aus tatsächlich vorhandener Historie ergänzen
+  const hs=epN-hist.length;aggStart=Math.min(epN,Math.ceil(hs/100)*100);agg=[];let e=aggStart;const sum=a=>a.reduce((x,y)=>x+y,0);while(e+100<=epN){agg.push([sum(hist.slice(e-hs,e-hs+100)),null]);e+=100}const rest=hist.slice(e-hs);aggCur={n:rest.length,ok:sum(rest),rew:null}}recent=Object.keys(d.q).slice(-10).reverse();last=null;sn=[];
+ $("pa").value=P.a;$("pg").value=P.g;$("pe").value=P.e;$("pd").value=P.d;$("pn").value=P.n;$("rg").value=P.rg;$("rc").value=P.rc;$("rp").value=P.rp;$("ri").value=P.ri;$("rd").value=P.rd;rwUpd();lock(true);resetCar();S=keyOf(c);
+ $("bGo").disabled=true;$("bPause").disabled=false;$("bBest").disabled=$("bRace").disabled=!best;
+ if(d.st==="done"||epN>=P.n){st="done";$("bPause").disabled=true;$("bMore").disabled=false}else{st="paused";setPU(true)}SAVE_OWNED=true;savedMax=maxIdx;toast("Speicherstand erfolgreich geladen.");return true}catch(e){SAVE_OWNED=false;st="idle";show("home");toast("Der Speicherstand ist beschädigt.");return false}}
+updLoadBtn();
+// ===== P01: Speicherstand exportieren / importieren =====
+function toastL(t,ms){toast(t);clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").style.display="none",ms||6000)}
+function exportSave(){persist(); // persist() schreibt nur, wenn die aktuelle Trainingseinheit den Speicher besitzt – sonst wird der gespeicherte Stand unverändert exportiert
+ const raw=localStorage.getItem("q1save"),d=readSave(raw);if(!d){toast("Noch kein gültiger Speicherstand zum Exportieren vorhanden.");return}
+ const slug=d.tn.toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""),dt=new Date(),z=n=>String(n).padStart(2,"0");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([raw],{type:"application/json"}));a.download=`quormel1_${slug||"strecke"}_${d.epN}ep_${dt.getFullYear()}-${z(dt.getMonth()+1)}-${z(dt.getDate())}.json`;
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("Speicherstand exportiert: "+a.download)}
+let IMP=null;const saveInfo=d=>`${d.tn} · ${d.epN} Episoden · ${d.ok} erfolgreich · beste Fahrt ${d.best?(d.best.steps/60).toFixed(2)+" s":"–"}`;
+$("bExp").onclick=exportSave;$("bImp").onclick=()=>{$("fImp").value="";$("fImp").click()};
+$("fImp").onchange=()=>{const f=$("fImp").files[0];$("fImp").value="";if(!f)return;if(f.size>25e6){toastL("Die Datei ist zu groß für einen QUORMEL-1-Speicherstand. Es wurde nichts verändert.");return}
+ f.text().then(txt=>{const d=readSave(txt);if(!d){toastL("Import abgelehnt: Die Datei ist kein gültiger QUORMEL-1-Speicherstand oder beschädigt. Dein bisheriger Speicherstand bleibt unverändert.",7000);return}
+  IMP=d;const cur=readSave();if(cur||(SAVE_OWNED&&st!=="idle")){$("imInfo").innerHTML="Vorhanden: "+(cur?saveInfo(cur):"aktuelles Training (noch nicht gespeichert)")+"<br>Datei: "+saveInfo(d);mdl("im",1)}else doImport()})
+ .catch(()=>toastL("Die Datei konnte nicht gelesen werden. Es wurde nichts verändert."))};
+function doImport(){const d=IMP;IMP=null;if(!d)return;if(st==="training")st="paused";
+ if(loadSave(d,true)){persist();if(readSave()){toastL("Speicherstand importiert: "+saveInfo(d),4500)}}} // gespeichert wird erst nach erfolgreichem Laden – ein fehlgeschlagener Import verändert q1save nicht
+$("imOk").onclick=()=>{mdl("im",0);doImport()};
+$("mvNo").onclick=()=>{MVP=null;mdl("mv",0);toast("Abgebrochen – es wurde nichts geladen.")};$("mvExp").onclick=()=>exportSave();
+$("mvOk").onclick=()=>{const m=MVP;MVP=null;mdl("mv",0);if(!m)return;if(st==="training")st="paused";if(loadSave(m.d,m.imp,true)){if(m.imp)persist();toastL("Älterer Speicherstand geladen: Die Q-Werte stammen aus der alten Lernlogik ohne Stillstands-Endstrafe. Für saubere Vergleiche starte ein neues Training.",7000)}};$("imNo").onclick=()=>{IMP=null;mdl("im",0);toast("Import abgebrochen – dein Speicherstand bleibt unverändert.")};$("imExp").onclick=()=>exportSave();
+// ===== P02: Fokus nach Mausklick zurücksetzen (Tastaturbedienung bleibt: dort ist e.detail 0) =====
+addEventListener("click",e=>{const b=e.target&&e.target.closest&&e.target.closest("button,summary");if(b&&e.detail>0)b.blur()});
+// ===== P03: Tastenzustand zurücksetzen, wenn das Fenster den Fokus verliert =====
+function clearKeys(){for(const k in keys)keys[k]=false}
+addEventListener("blur",clearKeys);document.addEventListener("visibilitychange",clearKeys);
+// ===== P04: Präsentationsmodus (größere Schrift, wird gemerkt) =====
+function setPres(on){document.body.classList.toggle("pres",on);$("bPres").textContent="Präsentationsmodus: "+(on?"an":"aus");try{localStorage.setItem("q1pres",on?"1":"0")}catch(e){}}
+$("bPres").onclick=()=>setPres(!document.body.classList.contains("pres"));try{if(localStorage.getItem("q1pres")==="1")setPres(true)}catch(e){}
+// ===== Startseite =====
+const hp=rs(cat(PRE[0].c),5);let hi=0;
+function homeTick(){const cv=$("hc"),x=cv.getContext("2d");x.clearRect(0,0,900,360);x.save();x.scale(.9,.5625);x.lineCap=x.lineJoin="round";x.strokeStyle="#e8ebf2";x.lineWidth=60;x.beginPath();hp.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();x.strokeStyle="#2b303c";x.lineWidth=52;x.stroke();x.setLineDash([12,16]);x.strokeStyle="#ffffff55";x.lineWidth=2;x.stroke();x.setLineDash([]);
+ hi=(hi+1.2)%(hp.length-4);const i=hi|0,a=hp[i],b=hp[i+3];drawCar(x,0,a.x,a.y,Math.atan2(b.y-a.y,b.x-a.x),"#ff2d3d",1);x.restore()}
+// ===== First-Person-Wiedergabe =====
+let rpk=0,rpPlay=false;
+$("bBest").onclick=()=>{if(!best)return;show("rpv");fsOn();mode="rp";rpk=0;rpPlay=true;$("rpT").max=best.steps-1};
+$("rpPlay").onclick=()=>rpPlay=!rpPlay;$("rpAgain").onclick=()=>{rpk=0;rpPlay=true};$("rpT").oninput=e=>{rpk=+e.target.value;rpPlay=false};
+function proj(cx,cy,a,wx,wy,hg,w,hz,f,ch){const dx=wx-cx,dy=wy-cy,z=dx*Math.cos(a)+dy*Math.sin(a),l=-dx*Math.sin(a)+dy*Math.cos(a);return z<2?null:[w/2+f*l/z,hz+f*(ch-hg)/z,f/z]}
+// Kamera-Glättung: Mittelwert über ±10 gespeicherte Schritte + Interpolation zwischen den Schritten
+function pose(k){const r=best.rec,n=r.length/3;let sx=0,sy=0,c=0,sn=0,m=0;for(let j=Math.max(0,k-10);j<=Math.min(n-1,k+10);j++){sx+=r[j*3];sy+=r[j*3+1];c+=Math.cos(r[j*3+2]);sn+=Math.sin(r[j*3+2]);m++}return[sx/m,sy/m,Math.atan2(sn,c)]}
+function smoothPose(t){const k=Math.floor(t),f=t-k,A=pose(k),B=pose(Math.min(k+1,best.steps-1));let d=B[2]-A[2];while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return[A[0]+(B[0]-A[0])*f,A[1]+(B[1]-A[1])*f,A[2]+d*f]}
+let rpSig="";
+function rpTick(){if(!best)return;if(rpPlay){rpk+=+$("rpS").value;if(rpk>=best.steps-1){rpk=best.steps-1;rpPlay=false}}
+ const sg=[rpk,innerWidth,innerHeight,FDBG,showIdeal,best.steps,T&&T.id].join("|");if(!rpPlay&&sg===rpSig)return;rpSig=sg; // F6: angehaltene Wiedergabe nicht neu rendern
+ const k=Math.floor(rpk),[px,py,a]=smoothPose(rpk);$("rpT").value=k;$("rpTime").textContent=(k/60).toFixed(2)+" s / "+(best.steps/60).toFixed(2)+" s";
+ drawFPV($("fc"),px,py,a)}
+function drawFPV(cv,px,py,a){ // zeichnet nur die Straße vor dem Auto; passierte Abschnitte werden gar nicht mehr verarbeitet
+ if(cv.width!==innerWidth||cv.height!==innerHeight){cv.width=innerWidth;cv.height=innerHeight}
+ const x=cv.getContext("2d"),w=cv.width,h=cv.height,hz=h*.4,f=h*.85,ch=9,cx=px+Math.cos(a)*5,cy=py+Math.sin(a)*5,p=T.p,n=p.length,hw=T.w/2;
+ const g=x.createLinearGradient(0,0,0,hz);g.addColorStop(0,"#3f83d0");g.addColorStop(1,"#cfe6f7");x.fillStyle=g;x.fillRect(0,0,w,hz);const gg=x.createLinearGradient(0,hz,0,h);gg.addColorStop(0,"#b3d1bf");gg.addColorStop(.25,"#3f7d46");gg.addColorStop(1,"#2d6a35");x.fillStyle=gg;x.fillRect(0,hz,w,h-hz);
+ const G=T.geo||(T.geo=buildGeo()),NZ=1.5,items=[],ca=Math.cos(a),sa=Math.sin(a),cs=new Array(n); // Geometrie ist vorberechnet; pro Bild werden nur sichtbare Teile gezeichnet
+ const cm=(X,Y,Hh)=>[-(X-cx)*sa+(Y-cy)*ca,(X-cx)*ca+(Y-cy)*sa,Hh||0];
+ const fg=(c,z)=>{const t=Math.min(.6,Math.max(0,z)/1100*.6);return`rgb(${(c[0]+(179-c[0])*t)|0},${(c[1]+(209-c[1])*t)|0},${(c[2]+(191-c[2])*t)|0})`};
+ const SP=q=>[w/2+f*q[0]/q[1],hz+f*(ch-q[2])/q[1]],H3=(r,k,hh)=>[r[k][0],r[k][1],hh];
+ const poly3=(P3,col,z)=>{const C=clipN(P3,NZ);if(C.length<3)return;let mn=1e9,mx=-1e9;const S2=C.map(q=>{const s2=SP(q);if(s2[0]<mn)mn=s2[0];if(s2[0]>mx)mx=s2[0];return s2});if(mx<0||mn>w)return;x.fillStyle=x.strokeStyle=fg(col,z);x.lineWidth=1;x.beginPath();S2.forEach((s2,i)=>i?x.lineTo(s2[0],s2[1]):x.moveTo(s2[0],s2[1]));x.closePath();x.fill();x.stroke()};
+ const Q=(pts,col,rk)=>{let z=0;for(const q of pts)z+=q[1];z/=pts.length;items.push({d:z-rk*.01,pts,col,z})};
+ for(let i=0;i<n;i++){const dx=p[i].x-cx,dy=p[i].y-cy;if(dx*dx+dy*dy>1.44e6)continue;const r=G.pt[i],o=new Array(16);for(let k=0;k<16;k++)o[k]=cm(r[k][0],r[k][1],0);cs[i]=o}
+ const ROADT=[59,64,75];for(const F of G.fill){if(!cs[F.i])continue;const P3=F.poly.map(v=>cm(v[0],v[1],0));let z=0;for(const q of P3)z+=q[1];items.push({d:1e9,pts:P3,col:ROADT,z:z/P3.length})} // F8: Scheitel-Füllung zuerst (liegt unter allem)
+ for(let i=0;i<n-1;i++){const A=cs[i],B=cs[i+1];if(!A||!B)continue;const tz=G.tight[i]||G.tight[i+1],gc=Math.floor(i/3)%2?[52,122,62]:[46,110,56],cu=Math.floor(i/2)%2?[235,235,235]:[220,30,45];
+  if(G.gl[i]&&G.gl[i+1])Q([A[0],A[1],B[1],B[0]],gc,0);if(G.gr[i]&&G.gr[i+1])Q([A[6],A[7],B[7],B[6]],gc,0);const ti=G.tight[i]===G.tight[i+1]?G.tight[i]:0;if(ti!==-1)Q([A[1],A[2],B[2],B[1]],cu,1);if(ti!==1)Q([A[5],A[6],B[6],B[5]],cu,1); // F8: zusammengefallene Innen-Randsteine im Scheitel weglassen
+  if(!(tz&&G.rfold[i]))Q([A[2],A[5],B[5],B[2]],tz?ROADT:i%2?[62,67,78]:[56,61,72],2);/* F8: gefaltete Flächen im Scheitel entfallen (Füllung deckt sie ab), dort einheitliche Asphaltfarbe */if(i%6<3)Q([A[3],A[4],B[4],B[3]],[230,230,230],3);
+  for(const sd of[-1,1]){if(!G.bok[(sd+1)/2][i])continue;const kb=sd<0?10:11,kt=sd<0?8:9,m3=Math.floor(i/5)%3,ad=m3===0?[200,30,45]:m3===1?[240,240,240]:[30,60,140];
+   Q([H3(A,kb,0),H3(A,kb,5),H3(B,kb,5),H3(B,kb,0)],ad,4);
+   if(i%3===1){const q=A[kt];items.push({d:q[1]-.05,z:q[1],fn:()=>{if(q[1]<NZ)return;const sc=f/q[1],sx=w/2+f*q[0]/q[1],sy=hz+f*ch/q[1];for(let t=0;t<3;t++){x.fillStyle=fg(t===2?[230,230,230]:[28,28,32],q[1]);x.beginPath();x.ellipse(sx,sy-sc*(1.8+t*3.2),sc*3.6,sc*1.8,0,0,6.3);x.fill()}}})}}}
+ for(const st of G.stands){const k1=st.sd<0?12:13,k2=st.sd<0?14:15;for(let j=st.i;j<st.i+8;j++){const A=cs[j],B=cs[j+1];if(!A||!B)continue;const cr=[[192,57,43],[41,128,185],[236,240,241],[241,196,15]][(j*3+((j>>2)%3))%4];
+  Q([H3(A,k2,0),H3(A,k2,28),H3(B,k2,28),H3(B,k2,0)],[90,95,105],5);Q([H3(A,k1,7),H3(A,k2,28),H3(B,k2,28),H3(B,k1,7)],cr,6);Q([H3(A,k1,0),H3(A,k1,7),H3(B,k1,7),H3(B,k1,0)],[120,125,135],7);
+  if(j===st.i||j===st.i+7){const X=j===st.i?A:B;Q([H3(X,k1,0),H3(X,k1,7),H3(X,k2,28),H3(X,k2,0)],[150,155,165],8)}}}
+ for(const tr of G.trees){const q=cm(tr.x,tr.y,0);if(q[1]<NZ||q[1]>1200||Math.abs(q[0])>q[1]*2)continue;items.push({d:q[1],z:q[1],fn:()=>{const sc=f/q[1],sx=w/2+f*q[0]/q[1],sy=hz+f*ch/q[1];x.strokeStyle=fg([74,51,34],q[1]);x.lineWidth=Math.max(1,sc*3);x.beginPath();x.moveTo(sx,sy);x.lineTo(sx,sy-sc*9);x.stroke();x.fillStyle=fg([24,84,40],q[1]);x.beginPath();x.moveTo(sx,sy-sc*30);x.lineTo(sx-sc*10,sy-sc*9);x.lineTo(sx+sc*10,sy-sc*9);x.fill()}})}
+ {const G0=p[n-3],Gp=p[n-1],dg=Math.atan2(Gp.y-G0.y,Gp.x-G0.x),sx=-Math.sin(dg),sy=Math.cos(dg),o=hw+16,gp=(t,hh)=>cm(Gp.x+sx*o*(1-2*t),Gp.y+sy*o*(1-2*t),hh),zc=cm(Gp.x,Gp.y,0)[1],w0=l=>cm(G0.x+G.nx[n-3]*l,G0.y+G.ny[n-3]*l,0),w1=l=>cm(Gp.x+G.nx[n-1]*l,Gp.y+G.ny[n-1]*l,0);
+  for(let q=0;q<10;q++){const a0=-hw+2*hw*q/10,a1=-hw+2*hw*(q+1)/10;Q([w0(a0),w0(a1),w1(a1),w1(a0)],q%2?[255,255,255]:[17,17,17],3.5)} // Ziellinie (nur First-Person)
+  if(zc>-200)items.push({d:zc-.02,z:zc,fn:()=>{for(const t of[0,1]){const b=gp(t,0),u=gp(t,46);if(b[1]<NZ||u[1]<NZ)continue;const sb=SP(b),su=SP(u);x.strokeStyle="#d0d4dc";x.lineWidth=Math.max(2,f/b[1]*5);x.beginPath();x.moveTo(sb[0],sb[1]);x.lineTo(su[0],su[1]);x.stroke()}
+   for(let c=0;c<14;c++)for(let r=0;r<3;r++)poly3([gp(c/14,26+r*6.67),gp((c+1)/14,26+r*6.67),gp((c+1)/14,32.67+r*6.67),gp(c/14,32.67+r*6.67)],(c+r)%2?[255,255,255]:[17,17,17],zc);
+   const a1=gp(0,46),a2=gp(1,46);if(a1[1]>=NZ&&a2[1]>=NZ){const s1=SP(a1),s2=SP(a2);x.strokeStyle="#ff2d3d";x.lineWidth=Math.max(2,f/a1[1]*3);x.beginPath();x.moveTo(s1[0],s1[1]);x.lineTo(s2[0],s2[1]);x.stroke()}}})}
+ items.sort((u,v)=>v.d-u.d);for(const it of items){if(it.pts)poly3(it.pts,it.col,it.z);else it.fn()}
+ if(FDBG){const ln=(P1,P2,col)=>{if(P1[1]<NZ||P2[1]<NZ)return;const s1=SP(P1),s2=SP(P2);x.strokeStyle=col;x.lineWidth=1.5;x.beginPath();x.moveTo(s1[0],s1[1]);x.lineTo(s2[0],s2[1]);x.stroke()};for(let i=0;i<n-1;i++){const A=cs[i],B=cs[i+1];if(!A||!B)continue;ln(A[2],B[2],"#0ff");ln(A[5],B[5],"#0ff");ln(A[3],B[3],"#ff0");ln(A[2],A[5],"#f0f");if(G.gl[i]&&G.gl[i+1])ln(A[0],B[0],"#0f0");if(G.gr[i]&&G.gr[i+1])ln(A[7],B[7],"#0f0")}}
+ const hg=x.createLinearGradient(0,h*.8,0,h);hg.addColorStop(0,"#2a2f3a");hg.addColorStop(1,"#08090c");x.fillStyle=hg;x.beginPath();x.moveTo(w*.1,h);x.lineTo(w*.28,h*.8);x.lineTo(w*.72,h*.8);x.lineTo(w*.9,h);x.fill();x.strokeStyle="#ff2d3d";x.lineWidth=3;x.beginPath();x.moveTo(w*.28,h*.8);x.lineTo(w*.72,h*.8);x.stroke();
+ x.fillStyle="#ff2d3d";x.font="italic 900 "+Math.round(h*.045)+"px Arial Black,sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillText("quormel 1",w/2,h*.9);x.textBaseline="alphabetic";x.textAlign="left";
+ const mw=Math.min(260,w*.22),mh=mw*H/W,mx=w-mw-12,my=12;x.drawImage(roadC,mx,my,mw,mh);x.strokeStyle="#fff";x.lineWidth=2;x.strokeRect(mx,my,mw,mh);
+ if(showIdeal){x.strokeStyle="#ffd400";x.lineWidth=1.5;x.beginPath();T.ideal.forEach((q,i)=>{const X=mx+q.x*mw/W,Y=my+q.y*mh/H;i?x.lineTo(X,Y):x.moveTo(X,Y)});x.stroke()}
+ x.save();x.translate(mx+px*mw/W,my+py*mh/H);x.rotate(a);x.fillStyle="#4da3ff";x.beginPath();x.moveTo(8,0);x.lineTo(-6,-5);x.lineTo(-6,5);x.fill();x.restore();x.fillStyle="#fff";x.font="12px sans-serif";x.fillText("Live-Position",mx+6,my+mh-6)}
+// ===== Rennen =====
+let R={s:"idle"},keys={};
+$("bRace").onclick=()=>{if(!best)return;show("race");{const o=localStorage.getItem("q1drv")!=="0";if($("drv").open!==o){DRVAUTO=true;$("drv").open=o}}fsOn();mode="race";R={s:"idle"};$("rGo").style.display="";$("rs").style.display="none";showCd("");$("rGo").textContent="Rennen starten";const pb=pbGet(),lg=pb===null?pbLegacy():null;$("rinfo").textContent=`${T.name} · Dein Rekord ${pb!==null?pb.toFixed(2)+" s":"–"}`+(lg!==null?` · Älterer Rekord „${T.name}“ (keiner Strecke eindeutig zuordenbar): ${lg.toFixed(2)} s`:"");$("hK").textContent="–";$("rai").style.display="none";$("rGo").disabled=false};
+$("rGo").onclick=()=>{R={s:"cd",go:false,t0:performance.now(),car:{x:T.p[0].x,y:T.p[0].y,a:T.a0,v:0,i:0},steps:0,acc:0,last:performance.now(),viol:0,was:true,bi:0,bs:0,aiDone:false};$("rGo").style.display="";$("rGo").textContent="Neu starten";$("rGo").blur();$("rs").style.display="none";showCd("")};
+addEventListener("keydown",e=>{const k=e.key.toLowerCase();keys[k]=true;if(page==="race"&&["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault()});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+function raceTick(){const cv=$("rc2");if(cv.width!==innerWidth||cv.height!==innerHeight){cv.width=innerWidth;cv.height=innerHeight}const x=cv.getContext("2d"),sc=Math.min(cv.width/W,cv.height/H);x.setTransform(1,0,0,1,0,0);x.fillStyle="#1b2a1f";x.fillRect(0,0,cv.width,cv.height);x.setTransform(sc,0,0,sc,(cv.width-W*sc)/2,(cv.height-H*sc)/2);x.drawImage(roadC,0,0);if(showIdeal)drawIdeal(x);x.fillStyle="#e8ebf2";x.font="16px sans-serif";
+ if(R.s==="idle"){x.font="22px sans-serif";x.fillText("Bereit? Klicke auf „Rennen starten“.",330,320);return}
+ const now=performance.now();
+ if(R.s==="cd"){const n=3-Math.floor((now-R.t0)/900);drawCar(x,0,R.car.x,R.car.y,R.car.a,"#4da3ff",1);showCd(n>0?n:"");if(n<=0){R.s="run";R.goT=now;R.last=now;R.acc=0}return}
+ if(R.s==="run"){showCd(now-R.goT<700?"GO!":"");R.acc+=(now-R.last)/1000*60;R.last=now;const k=R.car;while(R.acc>=1&&R.s==="run"){R.acc--;if(!R.go){if(keys.w||keys.b||keys.arrowup){R.go=true;if($("drv").open){DRVAUTO=true;$("drv").open=false}}else{R.acc=0;break}}R.steps++;
+  const up=keys.w||keys.b||keys.arrowup,dn=keys.s||keys.arrowdown,l=keys.a||keys.arrowleft,r=keys.d||keys.arrowright;
+  k.v=Math.max(-1,Math.min(V,k.v+(up?.5:dn?-.1:-.02*Math.sign(k.v))));if(!up&&!dn&&Math.abs(k.v)<.03)k.v=0;
+  const sv=Math.abs(k.v)<.3&&(up||dn)?(dn?-.35:.35):k.v/V;k.a+=((r?1:0)-(l?1:0))*.09*sv;let nx=k.x+Math.cos(k.a)*k.v,ny=k.y+Math.sin(k.a)*k.v;
+  if(road(nx,ny)){k.x=nx;k.y=ny;R.was=true}else{k.v*=.5;if(R.was){R.viol++;R.was=false}const mx=k.x+Math.cos(k.a)*k.v,my=k.y+Math.sin(k.a)*k.v;if(wallOk(mx,my,k.i)){k.x=mx;k.y=my}else k.v=0}
+  const old=k.i,lo=Math.max(0,k.i-5),hi=Math.min(T.p.length-1,k.i+40);let bd=1e9;for(let i=lo;i<=hi;i++){const d=Math.hypot(T.p[i].x-k.x,T.p[i].y-k.y);if(d<bd){bd=d;k.i=i}}
+  if(k.i>R.bi){R.bi=k.i;R.bs=R.steps}if(!R.aiDone&&R.steps>=best.steps){R.aiDone=true;R.aiT=best.steps/60} // F5: KI-Zeit steht fest, Spieler fährt weiter
+  if(k.i>=T.p.length-3)endRace(true);else if(R.steps-R.bs>=RSTALL||R.steps>=Math.max(best.steps*20,RMAX))endRace(false)}}
+ const gi=Math.min(R.steps,best.steps-1);drawCar(x,0,best.rec[gi*3],best.rec[gi*3+1],best.rec[gi*3+2],"#ff2d3d",.45);drawCar(x,0,R.car.x,R.car.y,R.car.a,"#4da3ff",1);
+ hudUpd(gi);$("rh").style.display=R.s==="run"&&!R.go?"block":"none";$("rai").style.display=R.s==="run"&&R.aiDone?"block":"none";
+ if(R.s==="done")showRes();}
+function endRace(pw){const pt=R.steps/60,at=best.steps/60;let win=pw&&pt<at;R.s="done";$("rGo").style.display="none";R.aiDone=true;R.aiT=at;hudUpd(0);
+ const pv=pbGet(),pb=pv===null?1e9:pv;if(pw&&pt<pb)localStorage.setItem(pbKey(),pt);
+ R.msg=!pw?"Deine Fahrt wurde nicht abgeschlossen.":win?"Glückwunsch! Die KI wurde besiegt. Die Weltherrschaft muss wohl noch warten!":"Die KI hat gewonnen! Die Weltherrschaft rückt näher. Menschen, genießt eure letzten freien Tage!";
+ R.lines=["Sieger: "+(win?"Du":"KI"),"Deine Zeit: "+(pw?pt.toFixed(2)+" s":"nicht abgeschlossen")+" · KI-Zeit: "+at.toFixed(2)+" s",pw?"Unterschied: "+Math.abs(pt-at).toFixed(2)+" s":"","Fahrbahnverletzungen: "+R.viol,"Persönlicher Rekord: "+(Math.min(pb,pw?pt:1e9)<1e9?Math.min(pb,pw?pt:1e9).toFixed(2)+" s":"–")]}
+// ===== Pause-UI, Vollbild =====
+function setPU(p){$("pac").style.display=p?"block":"none";$("bPause").textContent=p?"Fortsetzen":"Pause"}
+function fsOn(){try{document.documentElement.requestFullscreen().catch(()=>0)}catch(e){}}
+function back(){if(document.fullscreenElement)document.exitFullscreen();$("rs").style.display="none";showCd("");show("sim");mode="sim"}
+// ===== Glücksrad =====
+const WH={pa:[.01,1,.01,"Lernrate"],pg:[0,.99,.01,"Discount-Faktor"],pe:[.05,1,.05,"Explorationsrate"],pd:[.9,1,.001,"Explorationsabnahme"],pn:[0,0,0,"Episodenzahl"],rg:[20,200,10,"Ziel-Belohnung"],rc:[20,200,10,"Strafe: Straße verlassen"],rp:[1,8,.5,"Fortschritts-Belohnung"],ri:[0,2,.1,"Stillstand-Strafe"],rd:[0,2,.1,"Abweichungs-Strafe"]};
+let wid,wr=0,wv=[],wbusy=false,wres=null;
+IN.forEach(id=>{const b=document.createElement("button");b.className="wb";b.textContent="🎡";b.title="Glücksrad";b.style.cssText="padding:2px 6px;margin-top:4px";b.onclick=e=>{e.preventDefault();wOpen(id)};$(id).parentNode.appendChild(b)});
+function genVals(id){const[a,b,s]=WH[id];if(id==="pn")return[100,500,1000,5000,10000,500,1000,100];return Array.from({length:8},()=>+(a+rnd(Math.round((b-a)/s)+1)*s).toFixed(3))}
+function wOpen(id){wid=id;wv=genVals(id);wres=null;$("wt").textContent="Glücksrad: "+WH[id][3];$("wv").textContent="";$("wOk").disabled=true;$("wSpin").textContent="Drehen";$("wm").style.display="flex";wDraw()}
+function wClose(){if(!wbusy)$("wm").style.display="none"}
+function wDraw(){const x=$("wc").getContext("2d"),sg=Math.PI/4;x.clearRect(0,0,320,320);wv.forEach((v,i)=>{x.beginPath();x.moveTo(160,160);x.arc(160,160,150,wr+i*sg-Math.PI/2,wr+(i+1)*sg-Math.PI/2);x.fillStyle=i%2?"#2b3142":"#ff2d3d";x.fill();x.save();x.translate(160,160);x.rotate(wr+(i+.5)*sg-Math.PI/2);x.fillStyle="#fff";x.font="bold 16px sans-serif";x.textAlign="right";x.fillText(v,140,5);x.restore()});x.fillStyle="#fff";x.beginPath();x.moveTo(150,2);x.lineTo(170,2);x.lineTo(160,26);x.fill()}
+$("wSpin").onclick=()=>{if(wbusy)return;wbusy=true;$("wOk").disabled=true;$("wv").textContent="";wv=genVals(wid);const i=rnd(8),sg=Math.PI/4,base=-(i+.5)*sg,t0=performance.now(),r0=wr,tg=base+2*Math.PI*(Math.ceil((r0-base)/(2*Math.PI))+5);
+ (function f(n){const t=Math.min(1,(n-t0)/3000);wr=r0+(tg-r0)*(1-Math.pow(1-t,3));wDraw();if(t<1)requestAnimationFrame(f);else{wbusy=false;wres=wv[i];$("wv").textContent=wres;$("wOk").disabled=false;$("wSpin").textContent="Erneut drehen"}})(t0)};
+$("wOk").onclick=()=>{if(wres!==null){$(wid).value=wres;toast("Wert übernommen: "+wres)}rwUpd();wClose()};
+// ===== Erklärung =====
+function chooseAction(q,eps){if(FORCE){const f=FORCE;FORCE=null;return f}const ex=Math.random()<eps;return{ex,a:ex?rnd(5):best_(q)}}
+$("code").innerHTML='<b>So lernt das Auto die Strecke</b><ol style="line-height:1.55;padding-left:20px"><li><b>Sehen:</b> Fünf Sensoren messen den Abstand zum Straßenrand. Dazu kommt die Richtung zum Ziel. Das ergibt einen <i>Zustand</i>.</li><li><b>Entscheiden:</b> Die Q-Tabelle hat pro Zustand fünf Zahlen, eine für jede Lenkaktion. Meist wählt das Auto die höchste Zahl. Mit der Wahrscheinlichkeit ε probiert es zufällig etwas aus (Exploration).</li><li><b>Fahren:</b> Das Auto lenkt und bewegt sich einen Schritt weiter.</li><li><b>Belohnung:</b> Fortschritt Richtung Ziel gibt Pluspunkte, die Straße zu verlassen gibt Minuspunkte, das Ziel gibt viele Pluspunkte.</li><li><b>Lernen:</b> Die gewählte Zahl wird angepasst: neu = alt + α · (Reward + γ · bester Wert im Folgezustand − alt).</li><li><b>Wiederholen:</b> Nach einem Fehler startet das Auto neu. ε sinkt, das Auto probiert weniger und nutzt mehr Erfahrung.</li></ol><small>Das Auto bekommt keine Fahrlinie und keine Ideallinie – nur Sensoren, Belohnungen und seine Q-Tabelle.</small> <button onclick="$(\'code\').style.display=\'none\'">Schließen</button>';
+$("bCode").onclick=()=>{const c=$("code");c.style.display=c.style.display==="block"?"none":"block"};
+// ===== Ideallinie (nur Anzeige, wird nie vom Lernen benutzt) =====
+let showIdeal=false;
+function idealLine(p,w){const n=p.length,m=w*.38,q=p.map(a=>({x:a.x,y:a.y}));for(let k=0;k<400;k++)for(let i=1;i<n-1;i++){let x=q[i].x+.5*((q[i-1].x+q[i+1].x)/2-q[i].x),y=q[i].y+.5*((q[i-1].y+q[i+1].y)/2-q[i].y);const dx=x-p[i].x,dy=y-p[i].y,d=Math.hypot(dx,dy);if(d>m){x=p[i].x+dx/d*m;y=p[i].y+dy/d*m}q[i]={x,y}}return q}
+function drawIdeal(x){x.save();x.setLineDash([10,8]);x.strokeStyle="#ffd400";x.lineWidth=2.5;x.beginPath();T.ideal.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();x.restore()}
+function toggleIdeal(){showIdeal=!showIdeal;$("bIdeal").textContent="Ideallinie: "+(showIdeal?"an":"aus")}
+$("bIdeal").onclick=toggleIdeal;
+function wallOk(x,y,i){let m=1e9;for(let j=Math.max(0,i-8);j<=Math.min(T.p.length-1,i+45);j++)m=Math.min(m,Math.hypot(T.p[j].x-x,T.p[j].y-y));return m<=T.w/2+16} // unsichtbare Wand 16 px hinter dem Straßenrand
+const EX={pa:"Die Lernrate (α) bestimmt, wie stark eine neue Erfahrung den alten Q-Wert überschreibt. Bei 0,01 lernt das Auto sehr langsam, aber stabil. Bei 1,0 zählt nur die neueste Erfahrung, das Lernen wird sprunghaft. Typisch sind Werte zwischen 0,1 und 0,3.",
+pg:"Der Discount-Faktor (γ) legt fest, wie wichtig zukünftige Belohnungen sind. Bei 0 denkt das Auto nur an den nächsten Schritt. Bei 0,95 plant es weit voraus, zum Beispiel früh in eine Kurve zu lenken, um später das Ziel zu erreichen.",
+pe:"Die Explorationsrate (ε) ist die Wahrscheinlichkeit, dass das Auto eine zufällige Aktion ausprobiert, statt die beste bekannte zu wählen. 1,00 bedeutet: am Anfang nur Ausprobieren. Ohne Exploration entdeckt das Auto keine besseren Wege.",
+pd:"Nach jeder Episode wird ε mit diesem Faktor multipliziert. Bei 0,995 sinkt ε langsam, das Auto probiert lange aus. Bei 0,90 sinkt es schnell, das Auto verlässt sich früh auf sein Wissen. ε fällt nie unter 0,05.",
+pn:"Eine Episode ist eine Fahrt vom Start bis zum Ziel oder bis zum Fehler. Mehr Episoden bedeuten mehr Erfahrung, aber auch längeres Training. Schwere Strecken brauchen meist deutlich mehr Episoden.",
+ps:"Schritte pro Bild bestimmt, wie viele Simulationsschritte pro Bildschirm-Update berechnet werden. Das ändert nur das Tempo der Anzeige, nicht die Rechnung oder das Lernergebnis.",
+rg:"Belohnung, wenn das Ziel erreicht wird. Je höher, desto stärker wird jeder Weg zum Ziel bevorzugt.",
+rc:"Strafe, wenn das Auto die Straße verlässt. Eine hohe Strafe lehrt das Auto, Fehler zu vermeiden. Ist sie zu klein, riskiert es mehr.",
+rp:"Belohnung für jeden Streckenpunkt Fortschritt Richtung Ziel. Sie sorgt dafür, dass das Auto nicht einfach stehen bleibt. Der Fortschritt wird nur für die Belohnung gemessen, nicht als Lenkhilfe.",
+ri:"Strafe für Schritte ohne Fortschritt. Sie verhindert, dass das Auto auf der Stelle oder rückwärts fährt. Gibt es 1500 Schritte lang keinen neuen Fortschritt, endet die Fahrt mit derselben Strafe wie beim Verlassen der Straße.",
+rd:"Kleine Strafe für Abstand zur Straßenmitte. Zu hohe Werte lassen das Auto ängstlich in der Mitte kleben, zu niedrige lassen es zum Rand driften."};
+const mk=(t,ar)=>{const d=document.createElement("details");d.className="ex"+(ar?" ar":"");d.innerHTML="<summary>"+(ar?"▸":"Erklärung")+"</summary><div></div>";d.lastChild.textContent=t;if(ar)d.ontoggle=()=>d.firstChild.textContent=d.open?"▾":"▸";return d};
+Object.keys(EX).forEach(id=>{const l=$(id).parentNode;l.insertBefore(mk(EX[id],1),l.childNodes[1])});
+$("kp").after(mk("Episode: eine Fahrt. Erfolgreich: Ziel erreicht. Fehlgeschlagen: Straße verlassen oder Zeitlimit. Erfolgsquote: Anteil erfolgreicher Fahrten insgesamt, „Letzte 100“ nur die letzten 100. ε: aktuelle Zufalls-Wahrscheinlichkeit. Bester Fortschritt: weitester erreichter Punkt der Strecke. Ø Reward: durchschnittliche Punkte pro Episode. Ø Fahrtdauer: Simulationsschritte pro Episode."));
+// ===== Parameter lernen (isoliert: eigene Q-Tabelle, Zustand wird beim Verlassen wiederhergestellt) =====
+let LAB=null,psel=null;
+const LCTRL=[[50,330],[220,330],[360,170],[500,320],[640,470],[780,330],[950,330]];
+const LPAR=[
+{id:"a",n:"Lernrate (Alpha)",k:"a",min:.01,max:1,st:.01,d:.15,t:["Die Lernrate bestimmt, wie stark neue Erfahrungen die bisherigen Einschätzungen des Autos verändern. Hoch heißt starke Anpassung, niedrig heißt kleine Schritte.","Stell dir vor, das Auto lenkt in der Kurve falsch. Bei hoher Lernrate verändert sich der Q-Wert dieser Aktion deutlich, bei niedriger nur ein wenig. Das Lernen ist dann ruhiger, aber langsamer.","Probiere 1,00 aus und beobachte, wie stark die orange markierten Q-Werte springen."]},
+{id:"g",n:"Discount-Faktor (Gamma)",k:"g",min:0,max:.99,st:.01,d:.95,t:["Der Discount-Faktor legt fest, wie wichtig zukünftige Belohnungen sind. Bei 0 zählt nur der nächste Schritt, nahe 1 zählt auch das weit entfernte Ziel.","Beispiel: Das Auto lenkt früh in eine Kurve, die erst später Fortschritt bringt. Mit hohem Gamma lohnt sich dieses vorausschauende Lenken.","Teste Gamma 0 und schau, ob das Auto kurzsichtig lenkt."]},
+{id:"e",n:"Explorationsrate (Epsilon)",k:"eps_",min:.05,max:1,st:.05,d:1,t:["Epsilon ist die Wahrscheinlichkeit, mit der das Auto zufällig etwas ausprobiert (Exploration) statt die beste bekannte Aktion zu wählen (Exploitation).","Bei 1,00 fährt das Auto zufällig und entdeckt neue Wege. Bei 0,05 verlässt es sich fast nur auf seine Q-Tabelle.","Beobachte, wie viele neue Zustände bei hohem Epsilon in der Tabelle entstehen. Die Abnahme pro Episode ist hier fest."]},
+{id:"d",n:"Explorationsabnahme (Epsilon Decay)",k:"d",min:.9,max:1,st:.001,d:.995,t:["Die Explorationsabnahme senkt Epsilon nach jeder Episode (Epsilon mal Faktor). 0,995 heißt langsames Abnehmen, 0,90 sehr schnelles.","Beispiel: Bei 0,90 ist Epsilon nach 20 Fahrten nur noch etwa 0,12. Das Auto verlässt sich früh auf unfertiges Wissen.","Beobachte „ε aktuell“ über mehrere Episoden."]},
+{id:"rg",n:"Belohnung für das Erreichen des Ziels",k:"rg",min:0,max:300,st:10,d:100,t:["Die Zielbelohnung ist die große Prämie fürs Erreichen des Ziels. Über Gamma zieht sie die Werte der Zustände davor nach oben.","Beispiel: Bei 0 gibt es keinen Extra-Grund, das Ziel zu erreichen. Bei 300 lohnt sich jeder Weg dorthin stark.","Beobachte die Q-Werte kurz vor dem Ziel."]},
+{id:"rc",n:"Strafe für das Verlassen der Straße",k:"rc",min:0,max:300,st:10,d:100,t:["Die Strafe wird abgezogen, wenn das Auto die Straße verlässt. Sie lehrt das Auto, gefährliche Lenkaktionen zu meiden.","Beispiel: Bei hoher Strafe sinkt der Q-Wert der Aktion vor dem Fehler stark. Bei 0 hat ein Fehler kaum Folgen.","Beobachte, wie Aktionen kurz vor dem Straßenrand schlechter bewertet werden."]},
+{id:"rp",n:"Belohnung für den Fortschritt",k:"rp",min:0,max:10,st:.5,d:3,t:["Die Fortschrittsbelohnung gibt Punkte für jeden Streckenabschnitt, den das Auto Richtung Ziel schafft. So wird Vorwärtsfahren attraktiv.","Beispiel: Ohne sie lernt das Auto langsam, weil erst das Ziel belohnt wird. Mit hohem Wert lernt es schneller vorwärts zu fahren.","Beobachte den Reward pro Schritt."]},
+{id:"ri",n:"Strafe für Stillstand",k:"ri",min:0,max:3,st:.1,d:.5,t:["Die Stillstandsstrafe wird abgezogen, wenn kein Fortschritt entsteht. Sie verhindert, dass das Auto auf der Stelle fährt oder zurückrollt.","Beispiel: Bei hoher Strafe sind Schritte ohne Fortschritt unattraktiv, bei 0 kostet Trödeln nichts.","Beobachte, wie der Reward in Schritten ohne Fortschritt sinkt."]}];
+$("pw").innerHTML='<div class="drawb" id="pOpen"><svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="#ff2d3d" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h8M18 7h2M4 17h3M13 17h7"/><circle cx="15" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg><h3 style="margin:10px 0 4px">Parameter lernen</h3><p style="color:var(--m);margin:0">Untersuche, wie einzelne Lernparameter das Verhalten der KI verändern.</p></div>';$("pOpen").onclick=()=>mdl("po",1);
+LPAR.forEach(p=>{const b=document.createElement("button");b.textContent=p.n;b.onclick=()=>{psel=p.id;[...$("pg2").children].forEach(x=>x.classList.toggle("sel",x===b));$("pGo").disabled=false};$("pg2").appendChild(b)});
+$("pGo").onclick=()=>{mdl("po",0);labEnter(psel)};
+function labEnter(id){if(!LAB)LAB={snap:{T,mask,roadC,Q,P,c,S,sn,epN,ok,fail,hist,best,rec,epRew,sumRew,sumSteps,maxIdx,last,logs,recent,okSteps,st},fast:false};labSpd(LAB.fast);
+ const pr=LPAR.find(p=>p.id===id);LAB.k=pr;LAB.run=false;LAB.f=0;
+ setTrack("Lernstrecke S-Kurve",80,rs(cat(LCTRL),5));Q=new Map();P={a:.15,g:.95,e:1,d:.995,n:1e9,rg:100,rc:100,rp:3,ri:.5,rd:.5,eps_:1};
+ epN=ok=fail=sumRew=sumSteps=maxIdx=okSteps=0;hist=[];best=null;logs=[];recent=[];last=null;sn=[];st="lab";resetCar();S=keyOf(c);
+ $("lt").textContent=pr.n;$("le").innerHTML=pr.t.map(t=>`<p>${t}</p>`).join("");const sl=$("ls");sl.min=pr.min;sl.max=pr.max;sl.step=pr.st;sl.value=pr.d;$("lv").textContent=pr.d;$("ll").textContent=pr.n+" (aktiv)";
+ $("lo").innerHTML=LPAR.filter(p=>p.id!==id).map(p=>`<label>${p.n}<input disabled value="${p.d}"></label>`).join("");$("lGo").textContent="Starten";show("pl");window.scrollTo(0,0)}
+$("ls").oninput=()=>{if(!LAB)return;const v=+$("ls").value;P[LAB.k.k]=v;$("lv").textContent=v}; // wirkt ab dem nächsten Lernschritt
+$("lGo").onclick=()=>{if(!LAB)return;LAB.run=!LAB.run;$("lGo").textContent=LAB.run?"Pausieren":"Fortsetzen"};
+$("lRe").onclick=()=>{if(LAB)labEnter(LAB.k.id)};
+function labExit(){if(!LAB)return;({T,mask,roadC,Q,P,c,S,sn,epN,ok,fail,hist,best,rec,epRew,sumRew,sumSteps,maxIdx,last,logs,recent,okSteps,st}=LAB.snap);LAB=null;$("bBest").disabled=$("bRace").disabled=!best;show("lib");$("pw").scrollIntoView()}
+// P05: Zeitlupe = 1 Lernschritt pro 12 Bilder (≈ 5 Schritte/s bei 60 Bildern/s), Schnell = 20 Lernschritte pro Bild (≈ 1200 Schritte/s)
+function labSpd(fast){if(!LAB)return;LAB.fast=fast;$("lSlow").classList.toggle("sel",!fast);$("lFast").classList.toggle("sel",fast);$("lSpd").textContent=fast?"20 Lernschritte pro Bild – Lernfortschritt sichtbar":"1 Lernschritt pro 12 Bilder – jede Entscheidung nachvollziehbar"}
+$("lSlow").onclick=()=>labSpd(false);$("lFast").onclick=()=>labSpd(true);
+function labTick(){if(!LAB)return;if(LAB.run){LAB.f++;if(LAB.fast){for(let i=0;i<20&&LAB.run;i++)trainStep()}else if(LAB.f%12===0)trainStep()}
+ if(LAB.run){drawSim($("lc"));if(LAB.f%4===0)labUI()}else{const sg=[epN,Q.size,c&&c.x,c&&c.y,last&&last.nw,LAB.k&&P[LAB.k.k],recent[0]].join("|"),now=performance.now();if(sg!==LAB.sig||now-(LAB.t||0)>1000){LAB.sig=sg;LAB.t=now;drawSim($("lc"));labUI()}}} // F6
+function labUI(){const l50=hist.slice(-50),k=[["Episode",epN],["Erfolgreich",ok],["Fehlgeschlagen",fail],["ε aktuell",P.eps_.toFixed(3)],["Erfolgsquote (letzte 50)",l50.length?Math.round(l50.reduce((a,b)=>a+b,0)/l50.length*100)+"%":"–"],["Bester Fortschritt",Math.round(maxIdx/(T.p.length-1)*100)+"%"]];
+ if(last)k.push(["Zustand",last.sk],["Sensoren (px)",last.sens.map(v=>v|0).join(" / ")],["Aktion",ACT[last.a]+" – "+(last.ex?"Exploration":"Exploitation")],["Reward",last.r.toFixed(1)],["Q alt → neu",last.old.toFixed(2)+" → "+last.nw.toFixed(2)]);
+ $("lk").innerHTML=k.map(a=>`<div>${a[0]}<b>${a[1]}</b></div>`).join("");
+ $("lm").textContent=last?"Orange markiert: zuletzt veränderter Q-Wert. Grün: höchster Wert im Zustand.":"Noch keine Trainingsdaten vorhanden. Starte das Training, damit die KI ihre ersten Erfahrungen sammelt.";
+ $("lq").innerHTML="<tr><th>Zustand"+ACT.map(a=>"<th>"+a.replace("Stark ","St. ").replace("Leicht ","L. ")).join("")+"</tr>"+recent.map(key=>{const q=getQ(key),m=Math.max(...q);return`<tr><td>${key}`+q.map((v,i)=>`<td class="${v===m&&m!==0?"mx":""} ${last&&key===last.sk&&i===last.a?"up":""}">${v.toFixed(2)}`).join("")+"</tr>"}).join("")}
+function sideFree(A,sd,offs){return offs.every(o=>!road(A[0]+A[2]*sd*o,A[1]+A[3]*sd*o))} // Umgebungsobjekte nur dort, wo keine Straße liegt
+let epLog=[],fails=[],FORCE=null,DEC=null,FA=null,DM={};
+const mdl=(id,on)=>$(id).style.display=on?"flex":"none";
+// Weitertrainieren: Q-Tabelle, Parameter, ε und Statistik bleiben; nur das Episodenziel wächst
+$("bMore").onclick=()=>{if(st!=="done")return;$("mi").innerHTML=`Bisher: ${epN} Episoden (geplant ${P.n}) · ${ok} erfolgreich · Erfolgsquote ${epN?Math.round(ok/epN*100):0}%<br>Q-Tabelle, alle Lernparameter und ε bleiben unverändert.`;mdl("mm",1)};
+$("mx").onchange=()=>$("mc").style.display=$("mx").value==="c"?"block":"none";
+$("mOk").onclick=()=>{const e=$("mx").value==="c"?parseInt($("mc").value):parseInt($("mx").value);if(!(e>0)){toast("Bitte eine gültige Episodenzahl eingeben.");return}P.n=epN+e;st="training";resetCar();S=keyOf(c);$("bMore").disabled=true;$("bPause").disabled=false;mdl("mm",0);toast("Das Training läuft mit "+e+" weiteren Episoden weiter.")};
+// Pausenanimation: Auto zeichnet einen Pfeil Richtung „Fortsetzen“
+const PA={t0:0};
+function paPath(){const a=[8,84],t=[75,24],d=Math.atan2(t[1]-a[1],t[0]-a[0]),w=(k)=>[t[0]-14*Math.cos(d+k),t[1]-14*Math.sin(d+k)];return[a,t,w(.5),t,w(-.5)]}
+function paAt(pts,sl){for(let i=0;i<pts.length-1;i++){const l=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]);if(sl<=l||i===pts.length-2){const u=Math.min(1,sl/l);return[pts[i][0]+(pts[i+1][0]-pts[i][0])*u,pts[i][1]+(pts[i+1][1]-pts[i][1])*u,Math.atan2(pts[i+1][1]-pts[i][1],pts[i+1][0]-pts[i][0])]}sl-=l}}
+function paTrail(x,pts,len,al){let rest=len;x.strokeStyle=`rgba(255,45,61,${al})`;x.lineWidth=3;x.lineCap=x.lineJoin="round";x.beginPath();x.moveTo(pts[0][0],pts[0][1]);for(let i=0;i<pts.length-1&&rest>0;i++){const l=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]),u=Math.min(1,rest/l);x.lineTo(pts[i][0]+(pts[i+1][0]-pts[i][0])*u,pts[i][1]+(pts[i+1][1]-pts[i][1])*u);rest-=l}x.stroke()}
+function paTick(){if(st!=="paused"){PA.t0=0;return}const x=$("pac").getContext("2d");x.clearRect(0,0,150,90);const pts=paPath(),L=pts.slice(1).reduce((s,p,i)=>s+Math.hypot(p[0]-pts[i][0],p[1]-pts[i][1]),0);
+ if(matchMedia("(prefers-reduced-motion: reduce)").matches){paTrail(x,pts,L,1);return}
+ const now=performance.now();if(!PA.t0)PA.t0=now;const T0=now-PA.t0,cyc=Math.floor(T0/3300),ct=T0%3300;
+ if(cyc>0)paTrail(x,pts,L,Math.max(0,1-ct/1200)); // alte Spur verblasst
+ let car;if(ct<2400){const sl=L*ct/2400;paTrail(x,pts,sl,1);car=paAt(pts,sl)}else{paTrail(x,pts,L,1);const u=(ct-2400)/900,e=u*u*(3-2*u),e2=pts[4];car=[e2[0]+(pts[0][0]-e2[0])*e,e2[1]+(pts[0][1]-e2[1])*e,Math.atan2(pts[0][1]-e2[1],pts[0][0]-e2[0])]}
+ drawCar(x,0,car[0],car[1],car[2],"#ff2d3d",1)}
+// Rennen-HUD
+const fmt=t=>String(Math.floor(t/60)).padStart(2,"0")+":"+(t%60).toFixed(2).padStart(5,"0").replace(".",",");
+function hudUpd(gi){$("hT").textContent=fmt(R.steps/60);$("hK").textContent=R.aiDone?fmt(R.aiT):R.s==="run"&&R.go?"fährt …":"–"}
+// F5: persönliche Bestzeiten pro Strecken-ID; alte namensbasierte Rekorde bleiben erhalten (nur Vorlagen werden eindeutig übernommen)
+const RSTALL=60*15,RMAX=60*600; // 15 s ohne neuen Streckenfortschritt bzw. 10 min Obergrenze
+let PREID=null;const presetIds=()=>PREID||(PREID=Object.fromEntries(PRE.map(t=>[t.n,trackHash(rs(rs(cat(t.c),5),5),t.w)])));
+const pbKey=()=>"q1pb2|"+T.id;
+function pbGet(){let v=localStorage.getItem(pbKey());if(v===null&&presetIds()[T.name]===T.id){const o=localStorage.getItem("q1pb|"+T.name);if(o!==null&&Number.isFinite(+o)){localStorage.setItem(pbKey(),o);v=o}}return v!==null&&Number.isFinite(+v)?+v:null}
+function matchPreset(){const a=trackSamp(T.p).o;for(const t of PRE){if(Math.round(t.w)!==Math.round(T.w))continue;const b=trackSamp(rs(rs(cat(t.c),5),5)).o;if(a.every((q,i)=>Math.hypot(q[0]-b[i][0],q[1]-b[i][1])<8))return presetIds()[t.n]}return null} // F5: alte Speicherstände ohne ID – Vorlage tolerant erkennen
+function pbLegacy(){if(presetIds()[T.name]===T.id)return null;const o=localStorage.getItem("q1pb|"+T.name);return o!==null&&Number.isFinite(+o)?+o:null}
+$("drv").open=localStorage.getItem("q1drv")!=="0";let DRVAUTO=false;$("drv").ontoggle=()=>{if(DRVAUTO){DRVAUTO=false;return}localStorage.setItem("q1drv",$("drv").open?"1":"0")}; // P12: automatisches Einklappen ändert die gespeicherte Einstellung nicht
+// Fehleranalyse (nur auf Wunsch, nur Wiedergabe gespeicherter Daten)
+$("bFail").onclick=faOpen;
+function faOpen(){FA=null;const b=$("fb");if(!fails.length){b.innerHTML="<p>Noch keine Fehlversuche vorhanden.</p>";mdl("fm",1);return}
+ b.innerHTML="<p style='color:var(--m)'>Die letzten 8 Fehlversuche (neueste zuerst). Klicke auf eine Fahrt, um sie zu untersuchen. Die Wiedergabe zeigt in Zeitlupe nur die letzten ca. 1,3 Sekunden (80 Schritte) vor dem Fehler; die blasse Linie zeigt die gesamte Fahrt davor.</p><div id='ft' style='display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px'></div>";
+ fails.slice(0,8).forEach((f,i)=>{const d=document.createElement("div");d.className="card";d.style.cursor="pointer";d.innerHTML=`<canvas width="200" height="128"></canvas><div>Episode ${f.ep} · ${f.prog}% Fortschritt</div>`;const x=d.firstChild.getContext("2d");x.drawImage(roadC,0,0,200,128);faPath(x,f,.2);x.strokeStyle="#ff2d3d";x.lineWidth=2;x.beginPath();for(let j=0;j<f.rec.length;j+=3){const X=f.rec[j]*.2,Y=f.rec[j+1]*.2;j?x.lineTo(X,Y):x.moveTo(X,Y)}x.stroke();const n=f.rec.length-3;x.fillStyle="#ffd400";x.fillRect(f.rec[n]*.2-3,f.rec[n+1]*.2-3,6,6);d.onclick=()=>faDetail(i);$("ft").appendChild(d)});mdl("fm",1)}
+function faPath(x,f,k){if(!f.path||f.path.length<4)return;x.save();x.strokeStyle="rgba(255,45,61,.3)";x.lineWidth=2;x.setLineDash([5,4]);x.beginPath();for(let j=0;j<f.path.length;j+=2)j?x.lineTo(f.path[j]*k,f.path[j+1]*k):x.moveTo(f.path[j]*k,f.path[j+1]*k);x.stroke();x.restore()}
+function faDetail(i){FA={f:fails[i],j:0,run:true,fr:0};$("fb").innerHTML='<div class="row"><button id="fPl">Pause</button><button id="fRe">Erneut abspielen</button><button onclick="faOpen()">Zur Übersicht</button></div><p style="color:var(--m);font-size:13px;margin:4px 0">Zeitlupe: Gezeigt werden nur die letzten ca. 1,3 Sekunden (bis zu 80 Schritte) vor dem Fehler. Blass: die gesamte Fahrt davor.</p><canvas id="fc2" width="640" height="410" style="width:100%;background:#0f1218;border-radius:8px"></canvas><div id="fi" style="font:12px monospace;line-height:1.5"></div><p id="fw" style="font-weight:600"></p>';
+ $("fPl").onclick=()=>{FA.run=!FA.run;$("fPl").textContent=FA.run?"Pause":"Fortsetzen"};$("fRe").onclick=()=>{FA.j=0;FA.run=true;$("fPl").textContent="Pause"}}
+function faTick(){if(!FA||$("fm").style.display!=="flex"||!$("fc2"))return;const f=FA.f,n=f.log.length;if(FA.run&&++FA.fr%5===0&&FA.j<n-1)FA.j++;
+ const j=FA.j,L=f.log[j],r=f.rec,pk=Math.max(0,j-1),px=r[pk*3],py=r[pk*3+1],pa=r[pk*3+2],x=$("fc2").getContext("2d"),k=.64;
+ x.drawImage(roadC,0,0,640,410);faPath(x,f,k);x.strokeStyle="#ff2d3d";x.lineWidth=2;x.beginPath();for(let q=0;q<=j;q++)q?x.lineTo(r[q*3]*k,r[q*3+1]*k):x.moveTo(r[q*3]*k,r[q*3+1]*k);x.stroke();
+ [-90,-45,0,45,90].forEach((d,q)=>{const a=pa+d*Math.PI/180;x.strokeStyle=["#ff0","#0ff","#f0f","#0ff","#ff0"][q];x.beginPath();x.moveTo(px*k,py*k);x.lineTo((px+Math.cos(a)*L[2][q])*k,(py+Math.sin(a)*L[2][q])*k);x.stroke()});
+ x.save();x.scale(k,k);drawCar(x,0,px,py,pa,"#ff2d3d",1);x.restore();
+ $("fi").textContent=`Schritt ${j+1}/${n} · Zustand ${L[3]} · Sensoren ${L[2].join(" / ")} · ${L[4]?"Exploration":"Exploitation"} → ${ACT[L[0]]} · Reward ${L[1]} · Q-Werte vor dem Update: ${L[5].join(", ")}`;
+ if(j===n-1){const m=Math.min(...L[2]),side=L[2][0]+L[2][1]<L[2][3]+L[2][4]?"linke":"rechte";$("fw").textContent=f.why==="off"?`Episode ${f.ep}: Das Auto hat die Straße verlassen (Fortschritt ${f.prog}%). Im letzten Zustand war der ${side} Rand am nächsten (kleinster Sensorwert ${m} px), die letzte Aktion war „${ACT[L[0]]}“.`:f.why==="stall"?`Episode ${f.ep}: 1500 Schritte lang gab es keinen neuen Streckenfortschritt (Stillstand oder Schleife, Fortschritt ${f.prog}%).`:`Episode ${f.ep}: Das Zeitlimit von ${f.steps} Schritten wurde erreicht, ohne das Ziel zu erreichen (Fortschritt ${f.prog}%).`}else $("fw").textContent=""}
+// Entscheidungsmodus: untersuchte Aktion wird exakt so ausgeführt (FORCE)
+$("bDec").onclick=()=>{if(st==="training")pause();if(st!=="paused"&&st!=="done"){toast("Starte zuerst das Training.");return}if(st==="done"&&(!road(c.x,c.y)||c.i>=T.p.length-3)){resetCar();S=keyOf(c)}DM={m:null,rev:false,done:false,pred:null};DEC=chooseAction(getQ(S),P.eps_);decUI();mdl("dm",1)};
+function decUI(){const q=getQ(S),mx=Math.max(...q);let h=`<b>Zustand ${S}</b> · Sensoren (px): ${sn.map(v=>v|0).join(" / ")} · ε = ${P.eps_.toFixed(3)}<table style="font:12px monospace;margin:8px 0"><tr><th>`+ACT.map(a=>`<th>${a}`).join("")+`</tr><tr><td>Q-Wert`+q.map(v=>`<td>${v.toFixed(2)}`).join("")+"</tr></table>";
+ if(DM.done&&DM.dry){const y=DM.dry;h+=`Vorgeführt: <b>${ACT[y.a]}</b> · Reward ${y.r.toFixed(1)} · Q-Wert bleibt ${y.q.toFixed(2)} (Training abgeschlossen – es wird nichts gelernt).`+(y.end?`<br>Die Fahrt ist hier zu Ende (${y.win?"Ziel erreicht":"Straße verlassen"}). Das Auto steht wieder am Start.`:"")+`<div class="row"><button class="pri" onclick="decNext()">Nächste Entscheidung untersuchen</button><button onclick="mdl('dm',0)">Zur Trainingsansicht</button></div>`}
+ else if(DM.done){h+=`Ausgeführt: <b>${ACT[last.a]}</b> · Reward ${last.r.toFixed(1)} · Q-Wert ${last.old.toFixed(2)} → ${last.nw.toFixed(2)}.<div class="row"><button class="pri" onclick="decNext()">Nächste Entscheidung untersuchen</button><button onclick="mdl('dm',0);resume()">Training fortsetzen</button><button onclick="mdl('dm',0)">Zur Trainingsansicht</button></div>`}
+ else if(!DM.m)h+='<div class="row"><button class="pri" onclick="DM.m=1;decUI()">Modus A: Entscheidung vorhersagen</button><button onclick="DM.m=2;DM.rev=true;decUI()">Modus B: Direkt anzeigen</button></div>';
+ else if(!DM.rev)h+="<p>Welche Aktion wählt die KI? Deine Vermutung:</p>"+ACT.map((a,i)=>`<label style="display:inline-block;margin-right:10px"><input type="radio" name="pr" style="width:auto" onchange="DM.pred=${i}"> ${a}</label>`).join("")+'<div class="row"><button class="pri" onclick="if(DM.pred===null){toast(\'Bitte zuerst eine Vermutung wählen.\');return}DM.rev=true;decUI()">Vermutung überprüfen</button></div>';
+ else{const a=DEC.a,n=q.filter(v=>v===mx).length;h+=(DM.m===1?`Deine Vermutung: ${ACT[DM.pred]} – ${DM.pred===a?"richtig!":"nicht ganz."}<br>`:"")+`Tatsächlich gewählt: <b>${ACT[a]}</b> (Q = ${q[a].toFixed(2)}) · ${DEC.ex?"Exploration":"Exploitation"}<br>`+(DEC.ex?`Die KI hat zufällig ${ACT[a]} ausgewählt, da gerade Exploration stattgefunden hat.`:`Die KI hat sich für ${ACT[a]} entschieden, weil diese Aktion bei diesem Zustand den höchsten bekannten Q-Wert besitzt.`+(n>1?" Mehrere Aktionen waren gleich gut, daher wurde zufällig unter den besten gewählt.":""))+(st==="done"?'<p style="color:var(--m)">Das Training ist abgeschlossen. Die Aktion wird nur vorgeführt – Q-Tabelle und Episodenzähler bleiben unverändert.</p><div class="row"><button class="pri" onclick="decDry()">Aktion vorführen (ohne Lernen)</button></div>':'<div class="row"><button class="pri" onclick="decRun()">Aktion ausführen</button></div>')}
+ $("db").innerHTML=h}
+function decRun(){if(st!=="paused"||!DEC)return;FORCE=DEC;trainStep();DEC=null;DM.done=true;decUI()} // P20: Lernschritte nur im pausierten Training
+function decDry(){if(st!=="done"||!DEC)return;const a=DEC.a,q=getQ(S)[a],res=stepCar(c,a);DM.dry={a,r:res.r,q,end:!!res.done,win:!!res.win};if(res.done)resetCar();S=keyOf(c);DEC=null;DM.done=true;decUI()} // P20: Vorführung ohne Q-Update, ohne Episode
+function decNext(){DM={m:null,rev:false,done:false,pred:null};DEC=chooseAction(getQ(S),P.eps_);decUI()}
+let fpI=-1,fpK=0;
+function showCd(n){const e=$("cd");e.textContent=n;e.style.display=n===""?"none":"flex"}
+function showRes(){if(R.shown)return;R.shown=1;const w=R.msg.startsWith("Glückwunsch");$("rs").innerHTML=`<div class="rc"><div style="font:italic 900 clamp(20px,3vw,28px)/1.25 'Arial Black',system-ui;letter-spacing:1px;color:${w?"#2ecc71":"#ff2d3d"}">${R.msg}</div><div style="color:var(--m);line-height:1.7;margin-top:14px">${R.lines.filter(Boolean).join("<br>")}</div><div class="row"><button class="pri" onclick="$('rGo').click()">Noch einmal</button><button onclick="back()">Zurück</button></div></div>`;$("rs").style.display="flex"}
+// ===== Menüs im Trainingsbereich =====
+$("bMA").onclick=()=>mdl("ma",1);$("bMB").onclick=()=>mdl("mb",1);
+["bDec","bFail","bBest","bRace"].forEach(id=>$(id).addEventListener("click",()=>{mdl("ma",0);mdl("mb",0)}));
+// ===== KI gegen KI: zwei unabhängige Q-Learning-Systeme, Kontext wird pro Schritt getauscht =====
+let DU=null,KP=null,NOTOAST=false,BV=null;
+const SUG={a:[.1,.8],g:[.5,.95],e:[.3,1],d:[.98,.995],rg:[20,200],rc:[30,200],rp:[1,6],ri:[0,2]};
+const getC=()=>({Q,P,c,S,sn,epN,ok,fail,hist,best,rec,epRew,sumRew,sumSteps,maxIdx,last,logs,recent,okSteps,epLog,fails});
+const setC=o=>{({Q,P,c,S,sn,epN,ok,fail,hist,best,rec,epRew,sumRew,sumSteps,maxIdx,last,logs,recent,okSteps,epLog,fails}=o)};
+const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+function avgMax(){let t=0;Q.forEach(q=>t+=Math.max(...q));return Q.size?t/Q.size:0}
+$("kk").innerHTML='<div class="drawb" id="kOpen"><svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="#ff2d3d" stroke-width="1.6" stroke-linejoin="round"><rect x="2" y="5" width="8.5" height="14" rx="2"/><rect x="13.5" y="5" width="8.5" height="14" rx="2"/><path d="M6.2 15V9M17.8 15V9"/></svg><h3 style="margin:10px 0 4px">KI gegen KI</h3><p style="color:var(--m);margin:0;padding:0 16px">Zwei KIs trainieren gleichzeitig nebeneinander. Nur ein Parameter ist unterschiedlich – wer lernt besser?</p></div>';
+$("kOpen").onclick=()=>mdl("ko",1);
+$("ks").innerHTML=PRE.map((t,i)=>`<option value="${i}">${t.n}</option>`).join("")+'<option value="lab">S-Kurve (Lernstrecke)</option>';
+LPAR.forEach(p=>{const b=document.createElement("button");b.textContent=p.n;b.onclick=()=>{KP=p;[...$("kg").children].forEach(x=>x.classList.toggle("sel",x===b));koSet(SUG[p.id])};$("kg").appendChild(b)});
+function koSet(v){["ka","kb"].forEach((id,i)=>{const e=$(id);e.min=KP.min;e.max=KP.max;e.step=KP.st;e.value=v[i];$(id+"v").textContent=v[i]});$("kv").style.display="block"}
+["ka","kb"].forEach(id=>$(id).oninput=()=>$(id+"v").textContent=$(id).value);$("kSug").onclick=()=>KP&&koSet(SUG[KP.id]);
+$("kGo").onclick=()=>{if(!KP){toast("Bitte zuerst einen Parameter wählen.");return}const a=+$("ka").value,b=+$("kb").value;if(a===b){toast("Die beiden Werte müssen unterschiedlich sein.");return}
+ const sm=$("kr").value,s0=(Math.random()*2147483647)|0,s1=sm==="same"?s0:(s0^0x5bd1e995)>>>0;DU={snap:{...getC(),T,mask,roadC,st},n:+$("kn").value,pr:KP,vals:{A:a,B:b},run:true,done:false,f:0,spf:20,A:{},B:{},seedMode:sm,seeds:{A:s0,B:s1}};LAB={duel:1};NOTOAST=true;
+ const tr=$("ks").value;if(tr==="lab")setTrack("Lernstrecke S-Kurve",80,rs(cat(LCTRL),5));else{const t=PRE[+tr];setTrack(t.n,t.w,rs(cat(t.c),5))}
+ ["A","B"].forEach(sd=>{const o=DU[sd];o.qh=[];o.first=null;o.rng=mul(DU.seeds[sd]);Q=new Map();P={a:.15,g:.95,e:1,d:.995,n:DU.n,rg:100,rc:100,rp:3,ri:.5,rd:.5,eps_:1};P[KP.k]=DU.vals[sd];epN=ok=fail=sumRew=sumSteps=maxIdx=okSteps=0;hist=[];best=null;logs=[];recent=[];last=null;sn=[];epLog=[];fails=[];resetCar();S=keyOf(c);o.ctx=getC();
+  const el=$("j"+sd);el.innerHTML=`<h3 style="margin:0 0 6px">KI ${sd} · ${KP.n} = ${DU.vals[sd]}</h3><canvas width="1000" height="640" style="width:100%;background:#0f1218;border-radius:8px"></canvas><div class="kp" style="margin-top:6px"></div><canvas width="320" height="60" style="width:100%;margin-top:6px"></canvas><details><summary>Q-Learning analysieren</summary><div style="font-size:12px;margin:6px 0"></div><table></table></details>`;o.cv=el.children[1];o.kp=el.children[2];o.ch=el.children[3];o.det=el.children[4]});
+ $("jt").textContent=`Identisch für beide: Strecke ${T.name} · ${DU.n} Episoden · ${DU.seedMode==="same"?"gleiche Zufallsbasis (Nr. "+DU.seeds.A+")":"unterschiedliche Zufallsbasis (A "+DU.seeds.A+" / B "+DU.seeds.B+")"} · übrige Werte α 0,15 · γ 0,95 · ε 1,00 · Abnahme 0,995 · Rewards Ziel 100 / Crash −100 / Fortschritt 3 / Stillstand 0,5 (außer dem untersuchten Parameter)`;
+ $("jr").innerHTML="";djBtns();mdl("ko",0);show("dj");fsOn()};
+$("jGo").onclick=()=>{if(!DU||DU.done)return;DU.run=!DU.run;djBtns()};$("jRetry").onclick=()=>{djExit();mdl("ko",1)};$("jBack").onclick=djExit;
+function djBtns(){const m=!DU?"":DU.done?"done":DU.run?"run":"pause";$("jGo").hidden=$("jEnd").hidden=!(m==="run"||m==="pause");$("jGo").textContent=m==="pause"?"Duell fortsetzen":"Duell pausieren";$("jRetry").hidden=$("jBack").hidden=m!=="done";$("jS").parentNode.hidden=m==="done"}$("jEnd").onclick=()=>{if(DU&&!DU.done)djFinish()};
+function duStep(sd){const o=DU[sd];if(o.ctx.epN>=DU.n)return;setC(o.ctx);const R0=Math.random;Math.random=o.rng;for(let i=0;i<DU.spf&&epN<P.n&&DU.run;i++){const e0=epN,k0=ok;trainStep();if(epN>e0){if(ok>k0&&o.first==null)o.first=epN;if(epN%20===0)o.qh.push(avgMax())}}Math.random=R0;o.ctx=getC()}
+function duDraw(sd){const o=DU[sd];setC(o.ctx);drawSim(o.cv);const n=epN;o.kp.innerHTML=[["Episode",n+" / "+P.n],["Erfolgreich",ok],["Fehlgeschlagen",fail],["Erfolgsquote",n?Math.round(ok/n*100)+"%":"–"],["ε",P.eps_.toFixed(3)],["Ø Reward",n?(sumRew/n).toFixed(1):"–"],["Bester Fortschritt",Math.round(maxIdx/(T.p.length-1)*100)+"%"],["Beste Zeit",best?(best.steps/60).toFixed(2)+" s":"–"]].map(a=>`<div>${a[0]}<b>${a[1]}</b></div>`).join("");
+ const x=o.ch.getContext("2d");x.clearRect(0,0,320,60);x.strokeStyle="#ff2d3d";x.beginPath();for(let i=0;i<hist.length;i+=Math.max(1,Math.floor(hist.length/200))){const w=hist.slice(Math.max(0,i-49),i+1),v=w.reduce((a,b)=>a+b,0)/w.length,X=i/Math.max(1,hist.length-1)*320,Y=56-v*52;i?x.lineTo(X,Y):x.moveTo(X,Y)}x.stroke();
+ if(o.det.open&&last){o.det.children[1].innerHTML=`Zustand ${last.sk} · Sensoren ${last.sens.map(v=>v|0).join("/")} · ${ACT[last.a]} (${last.ex?"Exploration":"Exploitation"}) · Reward ${last.r.toFixed(1)} · Q ${last.old.toFixed(2)} → ${last.nw.toFixed(2)}`;o.det.children[2].innerHTML="<tr><th>Zustand"+ACT.map(a=>"<th>"+a.replace("Stark ","St. ").replace("Leicht ","L. ")).join("")+"</tr>"+recent.slice(0,6).map(k=>{const q=getQ(k),m=Math.max(...q);return`<tr><td>${k}`+q.map(v=>`<td class="${v===m&&m!==0?"mx":""}">${v.toFixed(2)}`).join("")+"</tr>"}).join("")}}
+function djTick(){if(!DU)return;DU.spf=+$("jS").value;if(DU.run&&!DU.done){duStep("A");duStep("B");if(DU.A.ctx.epN>=DU.n&&DU.B.ctx.epN>=DU.n)djFinish()}if(DU.run&&!DU.done){if(++DU.f%3===0){duDraw("A");duDraw("B")}}else{const sg=[DU.done,DU.A.ctx.epN,DU.B.ctx.epN,DU.A.det.open,DU.B.det.open].join("|"),now=performance.now();if(sg!==DU.sig||now-(DU.t||0)>1000){DU.sig=sg;DU.t=now;duDraw("A");duDraw("B")}}} // F6
+function djFinish(){DU.partial=DU.A.ctx.epN<DU.n||DU.B.ctx.epN<DU.n;DU.done=true;DU.run=false;djBtns();duDraw("A");duDraw("B");djEval()}
+function djEval(){const f=sd=>{const o=DU[sd],x=o.ctx;return{q:x.epN?x.ok/x.epN:0,first:o.first,t:x.best?x.best.steps/60:null,r:x.epN?x.sumRew/x.epN:0,k:x.ok,qm:o.qh.length?o.qh[o.qh.length-1]:0}},a=f("A"),b=f("B");
+ const pc=v=>Math.round(v*100)+" %",tm=v=>v==null?"–":v.toFixed(2)+" s",fe=v=>v==null?"kein Erfolg":"Episode "+v,row=(n,x,y)=>`<tr><td style="text-align:left">${n}<td>${x}<td>${y}</tr>`;
+ const win=[],cmp=(nm,va,vb,hi)=>{if(va==null&&vb==null)return;if(va==null)win.push(["B",nm]);else if(vb==null)win.push(["A",nm]);else if(va!==vb)win.push([(va>vb)===hi?"A":"B",nm])};
+ cmp("einer höheren Erfolgsquote",a.q,b.q,true);cmp("der schnelleren Bestzeit",a.t,b.t,false);cmp("einem höheren durchschnittlichen Reward",a.r,b.r,true);
+ const lst=a=>a.length<2?a.join(""):a.slice(0,-1).join(", ")+" und "+a[a.length-1],wa=win.filter(w=>w[0]==="A").map(w=>w[1]),wb=win.filter(w=>w[0]==="B").map(w=>w[1]);
+ const fz=wa.length&&wb.length?`KI A war bei ${lst(wa)} besser, KI B bei ${lst(wb)}. Ein eindeutiger Gesamtsieger lässt sich anhand dieser Ergebnisse nicht bestimmen.`:wa.length?`KI A hat in diesem Training besser abgeschnitten: Sie war bei ${lst(wa)} vorn.`:wb.length?`KI B hat in diesem Training besser abgeschnitten: Sie war bei ${lst(wb)} vorn.`:(a.k+b.k?"Beide KIs haben in diesem Training gleich abgeschnitten.":"Keine der beiden KIs hat das Ziel erreicht. Mit mehr Episoden oder anderen Werten könnte sich das ändern.");
+ $("jr").innerHTML=`<div class="pan" style="margin-top:12px"><h3 style="margin-top:0">Auswertung: ${DU.pr.n}</h3>${DU.partial?`<p style="color:#ffb020;font-weight:600">Unvollständiges Duell: vorzeitig beendet (KI A ${DU.A.ctx.epN} / KI B ${DU.B.ctx.epN} von ${DU.n} Episoden).</p>`:""}<table style="font:13px system-ui;width:100%"><tr><th><th>KI A (${DU.vals.A})<th>KI B (${DU.vals.B})</tr>${row("Erfolgsquote",pc(a.q),pc(b.q))}${row("Episoden bis zum ersten Erfolg",fe(a.first),fe(b.first))}${row("Beste Fahrzeit",tm(a.t),tm(b.t))}${row("Ø Reward",a.r.toFixed(1),b.r.toFixed(1))}${row("Erfolgreiche Fahrten",a.k,b.k)}${row("Ø max. Q-Wert (zuletzt)",a.qm.toFixed(1),b.qm.toFixed(1))}</table><canvas id="jq" width="600" height="110" style="width:100%;max-width:700px;margin-top:8px"></canvas><small style="display:block;color:var(--m)">Q-Wert-Entwicklung (Ø max. Q-Wert der besuchten Zustände): rot = KI A, blau = KI B. Ein höherer Q-Wert bedeutet nicht automatisch eine bessere Fahrleistung.</small><p style="font-size:16px;font-weight:600">${fz}</p><p style="color:#ffb020;font-size:14px;margin-top:-6px">Ein einzelnes Duell ist ein Einzelfall – wiederhole es, um sicher zu sein. ${DU.seedMode==="same"?"Beide KIs hatten dieselbe Zufallsbasis; jede Wiederholung startet mit einer neuen.":"Die KIs hatten unterschiedliche Zufallsbasen – ein Teil des Unterschieds kann reiner Zufall sein."}</p><div class="row"><button onclick="bvOpen()" ${a.t!=null&&b.t!=null?"":"disabled"}>Beste Fahrten vergleichen</button></div></div>`;
+ const x=$("jq").getContext("2d"),all=[...DU.A.qh,...DU.B.qh],mx=Math.max(1,...all);[["A","#ff2d3d"],["B","#4da3ff"]].forEach(([sd,col])=>{const h=DU[sd].qh;x.strokeStyle=col;x.beginPath();h.forEach((v,i)=>{const X=i/Math.max(1,h.length-1)*600,Y=104-v/mx*98;i?x.lineTo(X,Y):x.moveTo(X,Y)});x.stroke()});$("jr").scrollIntoView()}
+function djExit(){if(!DU)return;NOTOAST=false;const o=DU.snap;setC(o);T=o.T;mask=o.mask;roadC=o.roadC;st=o.st;LAB=null;DU=null;BV=null;mdl("bv",0);setPU(st==="paused");$("bMore").disabled=st!=="done";$("bPause").disabled=!(st==="training"||st==="paused");$("bBest").disabled=$("bRace").disabled=!best;if(document.fullscreenElement)document.exitFullscreen();show("lib")}
+// Bestenvergleich der beiden Duell-KIs (nur Wiedergabe gespeicherter Bewegungsdaten)
+function bvOpen(){BV={a:DU.A.ctx.best,b:DU.B.ctx.best,k:0,run:true};$("bvS").textContent="";mdl("bv",1)}
+$("bvP").onclick=()=>{if(BV)BV.run=!BV.run};$("bvR").onclick=()=>{if(BV){BV.k=0;BV.run=true;$("bvS").textContent=""}};
+function bvTick(){if(!BV||$("bv").style.display!=="flex")return;if(BV.run)BV.k++;[["bA","A",BV.a],["bB","B",BV.b]].forEach(([id,sd,bt])=>{const x=$(id).getContext("2d");x.drawImage(roadC,0,0,500,320);const k=Math.min(BV.k,bt.steps-1);x.save();x.scale(.5,.5);drawCar(x,0,bt.rec[k*3],bt.rec[k*3+1],bt.rec[k*3+2],sd==="A"?"#ff2d3d":"#4da3ff",1);x.restore();$(id+"t").textContent=`KI ${sd}: ${(Math.min(BV.k,bt.steps)/60).toFixed(2)} s von ${(bt.steps/60).toFixed(2)} s`});
+ if(BV.k>=Math.max(BV.a.steps,BV.b.steps)){BV.run=false;const ta=BV.a.steps/60,tb=BV.b.steps/60;$("bvS").textContent=ta===tb?"Beide gespeicherten Fahrten sind gleich schnell.":`Schnellere gespeicherte Fahrt: KI ${ta<tb?"A":"B"} (Unterschied ${Math.abs(ta-tb).toFixed(2)} s).`}}
+// ===== First-Person: vorberechnete Streckengeometrie (einmal pro Strecke) =====
+let FDBG=false;
+function clipN(P,NZ){const o=[];for(let i=0;i<P.length;i++){const A=P[i],B=P[(i+1)%P.length],ia=A[1]>=NZ,ib=B[1]>=NZ;if(ia)o.push(A);if(ia!==ib){const t=(NZ-A[1])/(B[1]-A[1]);o.push([A[0]+(B[0]-A[0])*t,NZ,A[2]+(B[2]-A[2])*t])}}return o}
+function buildGeo(){const p=T.p,n=p.length,hw=T.w/2,G={n,hw,nx:[],ny:[],rad:[],inn:[],pt:[],bok:[[],[]],stands:[],trees:[]},gw=hw+70;
+ const OFF=[-gw,-(hw+9),-hw,-1,1,hw,hw+9,gw,-(hw+13),hw+13,-(hw+26),hw+26,-(hw+38),hw+38,-(hw+72),hw+72],tx=[],ty=[];
+ for(let i=0;i<n;i++){const a=p[Math.max(0,i-2)],b=p[Math.min(n-1,i+2)];let u=b.x-a.x,v=b.y-a.y;const l=Math.hypot(u,v)||1;u/=l;v/=l;tx[i]=u;ty[i]=v;G.nx[i]=-v;G.ny[i]=u}
+ for(let i=0;i<n;i++){const i0=Math.max(0,i-3),i1=Math.min(n-1,i+3);let d=Math.atan2(ty[i1],tx[i1])-Math.atan2(ty[i0],tx[i0]);while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;const k=d/Math.max(1,(i1-i0)*5);G.rad[i]=Math.abs(k)<1e-4?1e9:1/Math.abs(k);G.inn[i]=k>0?1:-1}
+ const rIn=[];for(let i=0;i<n;i++){const m=[1e9,1e9];for(let j=Math.max(0,i-8);j<=Math.min(n-1,i+8);j++){const si=(G.inn[j]+1)/2;if(G.rad[j]<m[si])m[si]=G.rad[j]}rIn[i]=m} // engster Radius je Seite in ±8 Abschnitten -> weiche Begrenzung
+ const rl=(i,sg)=>{let m=1e9;for(let j=Math.max(0,i-2);j<=Math.min(n-1,i+2);j++)if(G.inn[j]===sg&&G.rad[j]<m)m=G.rad[j];return m}; // engster Radius der Innenseite in ±2 Abschnitten
+ for(let i=0;i<n;i++){G.pt[i]=OFF.map(o0=>{const sg=Math.sign(o0),lim=Math.abs(o0)>hw+9?.95*rIn[i][(sg+1)/2]:.95*rl(i,sg);let o=o0;if(Math.abs(o)>lim)o=sg*Math.max(3,lim);return[p[i].x+G.nx[i]*o,p[i].y+G.ny[i]*o]})} // Innenseite wird begrenzt, damit sich Ränder nie überschlagen
+ const dmin=(X,Y,sk,sr)=>{let m=1e9;for(let j=0;j<n;j++){if(sk!==undefined&&Math.abs(j-sk)<=sr)continue;const d=Math.hypot(p[j].x-X,p[j].y-Y);if(d<m)m=d}return m},at=(i,sd,o)=>[p[i].x+G.nx[i]*sd*o,p[i].y+G.ny[i]*sd*o];
+ const cell=70,grid=new Map();p.forEach((q,j)=>{const key=((q.x/cell)|0)+","+((q.y/cell)|0);if(!grid.has(key))grid.set(key,[]);grid.get(key).push(j)});
+ const freeAt=(X,Y,r)=>{const c0=(X/cell)|0,c1=(Y/cell)|0;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const L=grid.get((c0+a)+","+(c1+b));if(L)for(const j of L)if(Math.hypot(p[j].x-X,p[j].y-Y)<r)return false}return true};
+ G.gl=[];G.gr=[];for(let i=0;i<n;i++)for(const sd of[-1,1]){let e=hw+9;for(let o=hw+12;o<=gw;o+=3){const q=at(i,sd,o);if(!freeAt(q[0],q[1],hw+10))break;e=o}(sd<0?G.gl:G.gr)[i]=e>hw+15;const k=sd<0?0:7;G.pt[i][k]=[p[i].x+G.nx[i]*sd*e,p[i].y+G.ny[i]*sd*e]} // Gras endet, sobald irgendein anderer Streckenteil näher als Fahrbahnbreite+Rand ist
+ for(const sd of[-1,1])for(let i=0;i<n;i++){const q=at(i,sd,hw+26);G.bok[(sd+1)/2][i]=dmin(q[0],q[1],i,25)>=hw+30&&!(G.inn[i]===sd&&G.rad[i]<hw+40)}
+ for(let i=15;i+8<n-25;i+=45){const pref=Math.floor(i/45)%2?1:-1;for(const sd of[pref,-pref]){const C=at(i+4,sd,hw+55);let ok=dmin(C[0],C[1])>=hw+42;for(const ii of[i,i+4,i+8])for(const o of[hw+38,hw+72]){const q=at(ii,sd,o);if(dmin(q[0],q[1])<hw+30)ok=false}if(G.inn[i+4]===sd&&G.rad[i+4]<hw+110)ok=false;if(ok){G.stands.push({i,sd,x:C[0],y:C[1]});break}}}
+ for(const st of G.stands)for(let j=st.i-30;j<=st.i+40;j+=5){if(j<2||j>n-3||(j>=st.i-3&&j<=st.i+11))continue;const q=at(j,st.sd,hw+36+((j*13)%5)*9);let ok=dmin(q[0],q[1])>=hw+22;for(const s2 of G.stands)if(Math.hypot(s2.x-q[0],s2.y-q[1])<42)ok=false;for(const t of G.trees)if(Math.hypot(t.x-q[0],t.y-q[1])<26)ok=false;if(ok)G.trees.push({x:q[0],y:q[1]})}
+ for(let k=0;k<16;k++)for(let i=1;i<n;i++){const a=G.pt[i-1][k],b=G.pt[i][k],tx=G.ny[i],ty=-G.nx[i];if((b[0]-a[0])*tx+(b[1]-a[1])*ty<.5){if(k===0||k===7)(k===0?G.gl:G.gr)[i]=false;else G.pt[i][k]=[a[0]+tx*.5,a[1]+ty*.5]}} // Randpunkte laufen nie rückwärts -> keine umgeklappten Flächen
+ // F8: Nur wo die innere Fahrbahnkante begrenzt werden musste (Radius < halbe Breite): Asphaltscheibe (r = halbe Breite − 1,5 px, mind. 0,96·halbe Breite) um den Mittellinienpunkt.
+ // Sie liegt vollständig in der 2D-Straßenmaske (Strich mit runden Verbindungen = Vereinigung solcher Scheiben) und wird unter allen anderen Flächen gezeichnet.
+ G.tight=[];G.rfold=[];G.fill=[];for(let i=0;i<n;i++){const sg=G.inn[i];G.tight[i]=.95*rl(i,sg)<hw?sg:0}
+ for(let i=0;i<n-1;i++){const A=G.pt[i],B=G.pt[i+1],q=[A[2],A[5],B[5],B[2]];let pos=0,neg=0;for(let k=0;k<4;k++){const a=q[k],b=q[(k+1)%4],c=q[(k+2)%4],cr=(b[0]-a[0])*(c[1]-b[1])-(b[1]-a[1])*(c[0]-b[0]);if(cr>1e-6)pos++;else if(cr<-1e-6)neg++}G.rfold[i]=pos&&neg}
+ for(let i=0;i<n;i++)if(G.tight[i]){const r=Math.max(hw*.96,hw-1.5),poly=[];for(let k=0;k<20;k++){const t=k/20*Math.PI*2;poly.push([p[i].x+Math.cos(t)*r,p[i].y+Math.sin(t)*r])}G.fill.push({i,poly})}
+ return G}
+$("rpD").onclick=()=>{FDBG=!FDBG;$("rpD").textContent="Debug: "+(FDBG?"an":"aus")};
+// ===== Streckeneditor: Zeichenbereich =====
+function edMargin(cw,ch,wv){const s=Math.min(W/cw,H/ch);return wv/s/2+14} // halbe Straßenbreite (in Bildschirm-Pixeln) + 14 px Sicherheitsabstand
+function edInside(x,y,cw,ch,wv){const m=edMargin(cw,ch,wv);return x>=m&&y>=m&&x<=cw-m&&y<=ch-m}
+function edAccept(ep,st,x,y,cw,ch,wv){if(!edInside(x,y,cw,ch,wv)){st.out=true;st.lost=true;return false}st.out=false;const l=ep[ep.length-1];if(l){const d=Math.hypot(x-l.x,y-l.y);if(st.lost&&d>60)return false;if(d<4)return false}st.lost=false;ep.push({x,y});return true}
+function edOutside(p,w,bw,bh){const hw=w/2;for(let i=0;i<p.length;i++){const a=p[Math.max(0,i-1)],b=p[Math.min(p.length-1,i+1)],l=Math.hypot(b.x-a.x,b.y-a.y)||1,tx=(b.x-a.x)/l*hw,ty=(b.y-a.y)/l*hw,pts=[[p[i].x,p[i].y],[p[i].x-ty,p[i].y+tx],[p[i].x+ty,p[i].y-tx]];if(i===0)pts.push([p[i].x-tx,p[i].y-ty]);if(i===p.length-1)pts.push([p[i].x+tx,p[i].y+ty]);for(const q of pts)if(q[0]<-.5||q[1]<-.5||q[0]>bw+.5||q[1]>bh+.5)return true}return false}
+function edBuild(ep,cw,ch,wv){const s=Math.min(W/cw,H/ch);let p=rs(ep.map(q=>({x:q.x*s,y:q.y*s})),5);for(let k=0;k<4;k++)p=p.map((q,i)=>{if(i<2||i>p.length-3)return q;let x=0,y=0;for(let j=-2;j<=2;j++){x+=p[i+j].x;y+=p[i+j].y}return{x:x/5,y:y/5}});return{p,out:edOutside(p,wv,cw*s,ch*s)}}
+function edFrame(){const m=edMargin(ec.width,ec.height,+$("ew").value);ex.save();ex.setLineDash([10,8]);ex.strokeStyle="#ff2d3d";ex.lineWidth=2;ex.strokeRect(m,m,ec.width-2*m,ec.height-2*m);ex.setLineDash([]);ex.fillStyle="#8a93a6";ex.font="12px system-ui";ex.fillText("Zeichenbereich – die Straßenränder bleiben im Bild",m+8,m+16);if(edSt.out){ex.fillStyle="#ff2d3d";ex.font="bold 18px system-ui";ex.textAlign="center";ex.fillText("Hier endet der Zeichenbereich.",ec.width/2,m+44)}ex.restore()}
+// ===== Geheime Freischaltung des Debug-Buttons (Q -> U -> 1, nur in der First-Person-View) =====
+const DS={i:0,t:0};
+function dbgReset(){DS.i=0;$("rpD").hidden=true;if(FDBG){FDBG=false;$("rpD").textContent="Debug: aus"}}
+addEventListener("keydown",e=>{if(page!=="rpv"||e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;const k=e.key.toLowerCase(),now=performance.now(),seq=["q","u","1"];if(DS.i>0&&now-DS.t>3000)DS.i=0;if(k===seq[DS.i]){if(DS.i===0)DS.t=now;DS.i++;if(DS.i===3){DS.i=0;$("rpD").hidden=false}}else if(k===seq[0]){DS.i=1;DS.t=now}else DS.i=0});
+// ===== Dynamisches Schrittlimit =====
+function maxSteps(){return T.ms||(T.ms=Math.min(60000,Math.max(1500,Math.ceil((T.p.length-1)*5/V*2.5))))} // 2,5-fache ideale Fahrzeit, mindestens wie bisher 1500
+// Start
+addEventListener("resize",()=>{if($("ed").style.display==="block"){const kx=innerWidth/ec.width,ky=innerHeight/ec.height;ep=ep.map(q=>({x:q.x*kx,y:q.y*ky}));ec.width=innerWidth;ec.height=innerHeight;edDraw()}});
+document.addEventListener("fullscreenchange",()=>{});
+requestAnimationFrame(loop);
+</script></body></html>

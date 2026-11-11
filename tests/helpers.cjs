@@ -23,8 +23,8 @@ function modules() { // alle Module der Neufassung, relativ zu /js/
   return out;
 }
 // Öffnet eine Fassung in einem frischen Kontext und stellt window.__q bereit: get(name), set(name,wert), f.<funktion>(…), seed(n)
-async function open(browser, base, which, viewport) {
-  const ctx = await browser.newContext({ viewport: viewport || { width: 1280, height: 800 }, acceptDownloads: true });
+async function open(browser, base, which, ctxOpts) { // ctxOpts: z. B. ein Geräteprofil (Bildschirmgröße, Pixeldichte, Touch)
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, acceptDownloads: true, ...(ctxOpts || {}) });
   const page = await ctx.newPage(); const errors = [];
   page.on("pageerror", e => errors.push(String(e))); page.on("console", m => { if (m.type() === "error") errors.push(m.text()) });
   await page.goto(base + (which === "legacy" ? LEGACY : NEW)); await page.waitForFunction(() => document.querySelectorAll("#cards .card").length === 3);
@@ -35,7 +35,11 @@ async function open(browser, base, which, viewport) {
     window.__q = { get: n => n in app ? app[n] : find(n), set: (n, v) => { if (!(n in app)) throw new Error("kein Zustand: " + n); app[n] = v }, f: new Proxy({}, { get: (_, n) => find(n) }) };
   }, modules());
   await page.evaluate(() => { window.__q.seed = a => { Math.random = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 } } });
-  return { page, ctx, errors, which };
+  const cdp = await ctx.newCDPSession(page);
+  // Berührungen und Stift über das Testprotokoll des Browsers (mehrere Finger gleichzeitig möglich)
+  const touch = (type, pts) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: (pts || []).map(([x, y, id]) => ({ x, y, id: id || 0 })) });
+  const pen = (type, x, y) => cdp.send("Input.dispatchMouseEvent", { type, x, y, button: type === "mouseMoved" ? "none" : "left", buttons: type === "mouseReleased" ? 0 : 1, clickCount: 1, pointerType: "pen" });
+  return { page, ctx, errors, which, touch, pen };
 }
 const sha = s => crypto.createHash("sha256").update(typeof s === "string" ? s : JSON.stringify(s)).digest("hex").slice(0, 16);
 // Vergleich mit Fundstelle der ersten Abweichung

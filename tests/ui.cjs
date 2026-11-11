@@ -6,7 +6,7 @@ const { serve, launch, open, same, report, sha } = require("./helpers.cjs");
 const frames = p => p.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))))));
 const snapshot = (p, canv) => p.evaluate(sel => {
   const strip = h => h.replace(/ (on(click|input|change)|data-(click|input|change|arg))="[^"]*"/g, "");
-  const b = document.body.cloneNode(true); b.querySelectorAll("script").forEach(s => s.remove()); b.querySelector("#toast").removeAttribute("style");
+  const b = document.body.cloneNode(true); b.querySelectorAll("script,[data-p3]").forEach(s => s.remove()); /* data-p3: Elemente, die es im Original nicht gibt (Bildschirmtasten) */ b.querySelector("#toast").removeAttribute("style");
   const vis = e => getComputedStyle(e).display !== "none";
   return {
     seite: [...document.querySelectorAll("section.on")].map(s => s.id), offen: [...document.querySelectorAll(".mdl,#ed,#code,#wm")].filter(vis).map(e => e.id),

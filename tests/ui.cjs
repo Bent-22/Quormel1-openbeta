@@ -5,7 +5,7 @@ const { serve, launch, open, same, report, sha } = require("./helpers.cjs");
 
 const frames = p => p.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))))));
 const snapshot = (p, canv) => p.evaluate(sel => {
-  const strip = h => h.replace(/ (on(click|input|change)|data-(click|input|change|arg))="[^"]*"/g, "");
+  const strip = h => h.replace(/ (on(click|input|change)|data-(click|input|change|arg))="[^"]*"/g, "").replace('<div class="by">Ein Projekt von</div>', '<div class="by">Entwickelt von</div>'); /* bewusste Textänderung auf der Startseite (Nov. 2026) */
   const b = document.body.cloneNode(true); b.querySelectorAll("script,[data-new]").forEach(s => s.remove()); /* data-new: Elemente, die es im Original nicht gibt (Bildschirmtasten) */ b.querySelector("#toast").removeAttribute("style");
   const vis = e => getComputedStyle(e).display !== "none";
   return {

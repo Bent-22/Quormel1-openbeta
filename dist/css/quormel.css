@@ -160,10 +160,10 @@ body.touch #race.on #tc{display:block}body.touch #drvT{display:block;margin-top:
 #rs .rc .row{position:static;justify-content:center;margin:16px 0 0;font-size:inherit}
 /* Hinweise dürfen Berührungen nicht abfangen (sie können über den Bildschirmtasten liegen) */
 body.touch #toast{pointer-events:none}
-/* Impressum & Datenschutz: dezenter Button unten links, öffnet ein Overlay. Im Rennen und in der First-Person-Wiedergabe ausgeblendet (Vollbild mit eigenen Bedienelementen), im Editor verdeckt. */
+/* Impressum & Datenschutz: dezenter Button unten links, öffnet ein Overlay. Nur auf der Startseite sichtbar, im Editor verdeckt. */
 #lgB{position:fixed;left:max(10px,env(safe-area-inset-left));bottom:max(10px,env(safe-area-inset-bottom));z-index:9;padding:5px 10px;font-size:11px;letter-spacing:.3px;color:var(--m);background:#151922cc;border:1px solid var(--l);border-radius:7px;opacity:.75}
 #lgB:hover,#lgB:focus-visible{opacity:1;color:var(--t);border-color:var(--a)}
-#race.on~#lgB,#rpv.on~#lgB{display:none}
+#home:not(.on)~#lgB{display:none}
 #lgM{position:fixed;inset:0;background:#000c;z-index:60;display:flex;align-items:center;justify-content:center;padding:12px}
 #lgM[hidden]{display:none}
 #lgM .pan{width:min(600px,96vw);max-height:90dvh;overflow:auto;font-size:14px;line-height:1.55;outline:none}

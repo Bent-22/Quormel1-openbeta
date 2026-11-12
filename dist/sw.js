@@ -9,7 +9,7 @@
 //
 // VERSION und FILES werden von tools/update-sw.cjs gesetzt. Nach jeder Änderung an Dateien der Anwendung: node tools/update-sw.cjs
 /* BEGIN GENERATED */
-const VERSION="286caa543e9b";
+const VERSION="bbc80a13272b";
 const FILES=["index.html","manifest.webmanifest","css/quormel.css","js/core/constants.js","js/core/qlearning.js","js/core/rng.js","js/core/track.js","js/input/touch-controls.js","js/main.js","js/pwa/register.js","js/render/fpv.js","js/render/hidpi.js","js/render/sim-view.js","js/state.js","js/storage/protect.js","js/storage/records.js","js/storage/save.js","js/ui/actions.js","js/ui/analysis.js","js/ui/dom.js","js/ui/duel.js","js/ui/editor.js","js/ui/explain.js","js/ui/home.js","js/ui/lab.js","js/ui/legal.js","js/ui/library.js","js/ui/pause-anim.js","js/ui/race.js","js/ui/replay.js","js/ui/sim.js","js/ui/wheel.js","icons/apple-touch-icon.png","icons/icon-192.png","icons/icon-512.png","icons/icon-maskable-512.png"];
 /* END GENERATED */
 const CACHE="quormel1-"+VERSION,BASE=new URL("./",self.location);

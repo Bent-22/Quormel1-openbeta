@@ -1,5 +1,36 @@
 # QUORMEL 1 – Übersicht der Änderungen
 
+## Phase 5 – Qualitätskontrolle und Fertigstellung (12.11.2026)
+
+### Behobene Fehler
+
+| Nr. | Fehler | Auswirkung | Behebung |
+|---|---|---|---|
+| 1 | Service Worker verwendete eine weitergeleitete Antwort für `index.html` | Bei Anbietern, die `index.html` auf den Ordner weiterleiten (Cloudflare Pages), wäre die Seite **ab dem zweiten Aufruf nicht mehr geladen** worden – online wie offline. Entstanden in Phase 4, vom damaligen Testserver nicht nachgestellt. | `sw.js` übernimmt den Inhalt weitergeleiteter Antworten in eine saubere Antwort. Test stellt das Verhalten nach. |
+| 2 | Speichern beim Verlassen nach einem Trainingsabbruch | Nach einem Abbruch wegen ungültiger Zahlenwerte konnte beim Verlassen der App ein ungültiger Stand den letzten gültigen ersetzen. Entstanden in Phase 4. | `storage/protect.js` schreibt den vorherigen Stand zurück, wenn das Speichern keinen gültigen Stand ergibt. |
+| 3 | Rennergebnis: „Noch einmal“ und „Zurück“ lagen außerhalb der Ergebniskarte | Die Schaltflächen standen am oberen Bildschirmrand über dem Streckennamen; auf Smartphones direkt neben „← Zurück“. **Fehler aus der Originaldatei.** | Eine CSS-Regel setzt sie in die Karte. |
+| 4 | Hinweise konnten Bildschirmtasten verdecken | Ein eingeblendeter Hinweis fing auf Smartphones Berührungen der Rennsteuerung ab. Entstanden in Phase 3. | Hinweise lassen im Touch-Modus Berührungen durch. |
+
+Punkt 3 ändert die Darstellung gegenüber der Originaldatei auch am PC: Die beiden Schaltflächen stehen jetzt unten in der Ergebniskarte.
+
+### Neu
+
+| Bereich | Umsetzung |
+|---|---|
+| Produktionsbuild | `node tools/build.cjs` erzeugt `dist/` mit genau den 36 Dateien, die veröffentlicht werden. Unverändert kopiert, nicht gebündelt, nicht verkleinert. `dist/` liegt im Repository. |
+| Tests | drei neue Testreihen (`math`, `regress`, `retina`), Gesamtlauf `tests/run-all.cjs`, alle Reihen auch gegen `dist/` |
+| Dokumentation | Abschluss-Testbericht, Checkliste für echte Geräte |
+
+### Unverändert
+
+- Q-Learning-Logik (nur ein Kommentar in `core/qlearning.js` nennt jetzt die richtigen Testdateien)
+- Speicherformat und Speicherort
+- alle Funktionen; nichts hinzugefügt, nichts entfernt
+
+### Weiterhin offen (nicht freigegeben, daher nicht umgesetzt)
+
+Die vier Punkte aus Abschnitt 10 des Modernisierungsplans: gebündeltes Speichern, IndexedDB, Ausgleich für 120-Hz-Displays, mehrere Speicherplätze. Außerdem gibt es weiterhin keinen Branch `main`.
+
 ## Phase 4 – PWA und Offline-Betrieb (11.11.2026)
 
 ### Neu

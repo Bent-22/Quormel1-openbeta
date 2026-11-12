@@ -1,10 +1,10 @@
 # QUORMEL 1 – Technische Architektur
 
-Stand: Phase 4 (11.11.2026)
+Stand: Phase 5 (12.11.2026) – Abschluss
 
 ## Überblick
 
-Die Anwendung besteht aus statischen Dateien ohne Build-Schritt und ohne Abhängigkeiten zur Laufzeit:
+Die Anwendung besteht aus statischen Dateien ohne Abhängigkeiten zur Laufzeit. Der Produktionsbuild (`dist/`) ist eine unveränderte Kopie dieser Dateien:
 
 ```
 index.html            Grundgerüst: 7 Seiten, 11 Modale, Overlays
@@ -119,8 +119,24 @@ Beschrieben in [pwa-offline.md](pwa-offline.md). Kurzfassung:
 - `storage/protect.js` ruft `persist()` auf, wenn die Seite verborgen wird, und bittet um dauerhaften Speicher. Format und Inhalt des Speicherstands sind unverändert.
 - Trainingsstände liegen weiter in `localStorage`; der Service Worker berührt sie nicht.
 
-## Hinweise für Phase 5
+## Produktionsbuild und Tests (Phase 5)
 
-- Vor jedem Commit mit Änderungen an der Anwendung: `node tools/update-sw.cjs`, dann `npm test`.
-- Offene Entscheidungen aus dem Plan (Abschnitt 10): IndexedDB, gebündeltes Speichern, 120-Hz-Ausgleich, mehrere Speicherplätze.
-- Zusammenführung nach `main` steht noch aus.
+- `tools/build.cjs` aktualisiert `sw.js` und kopiert die 36 Dateien der Anwendung nach `dist/`. Keine Bündelung, keine Verkleinerung: Veröffentlicht wird, was getestet wurde.
+- `tests/run-all.cjs` führt sieben Testreihen aus; mit `--dist` gegen den Produktionsbuild.
+
+| Testreihe | Prüft |
+|---|---|
+| `golden.cjs` | Lernergebnisse: Original gegen Neufassung, gleicher Seed |
+| `math.cjs` | Lernlogik gegen eine unabhängige, ausgeschriebene Referenz; Einzelschritte mit festen Zahlen |
+| `regress.cjs` | Langlauf, Rennen, Bestzeiten, alte und beschädigte Speicherstände, Fehlerfälle, Editor-Regeln, Labor und Duell vollständig |
+| `ui.cjs` | Oberfläche am PC: HTML und Canvas-Bilder nach jedem Bedienschritt |
+| `devices.cjs` | 14 Geräteprofile: Layout, Auflösung, Touch, Stift, Tastatur |
+| `retina.cjs` | jedes Canvas bei Pixeldichte 1 und 2 |
+| `pwa.cjs` | Offline, Versionswechsel, Installation, Speicherschutz, Hosting mit Weiterleitung |
+
+## Für die Weiterentwicklung
+
+- Nach jeder Änderung an der Anwendung: `node tools/build.cjs`, dann `npm test` und `npm run test:dist`.
+- `core/qlearning.js` nur ändern, wenn `golden.cjs` und `math.cjs` danach bestehen.
+- `setTrack()` und die Straßenmaske (1000 × 640) nie skalieren.
+- Offene Entscheidungen: Abschnitt 10 des Modernisierungsplans; Branch `main`.

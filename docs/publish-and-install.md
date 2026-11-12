@@ -14,18 +14,9 @@ HTTPS ist Pflicht. Ohne HTTPS läuft die Seite zwar, aber Browser erlauben dann 
 
 ### Was hochgeladen werden muss
 
-```
-index.html
-sw.js
-manifest.webmanifest
-css/
-js/
-icons/
-```
+**Den Ordner `dist/`.** Er enthält genau die 36 Dateien der fertigen Anwendung und nichts anderes.
 
-`index.html` und `sw.js` müssen auf der obersten Ebene liegen. Die übrigen Ordner (`docs/`, `tests/`, `legacy/`, `tools/`) braucht die Seite nicht. Sie stören aber auch nicht, wenn sie mit hochgeladen werden.
-
-Am einfachsten: auf GitHub „Code“ → „Download ZIP“ wählen, die ZIP-Datei entpacken und den entpackten Ordner hochladen.
+Am einfachsten: auf GitHub „Code“ → „Download ZIP“ wählen, die ZIP-Datei entpacken und daraus den Ordner `dist` hochladen.
 
 ### Weg A: Cloudflare Pages (Hochladen per Drag & Drop)
 
@@ -34,14 +25,14 @@ Erste Veröffentlichung:
 1. Im Cloudflare-Dashboard „Workers & Pages“ öffnen.
 2. „Create application“ → „Get started“ → „Drag and drop your files“.
 3. Einen Projektnamen eingeben. Er wird Teil der Adresse: `<projektname>.pages.dev`.
-4. Den Ordner (oder die ZIP-Datei) in das Upload-Feld ziehen.
+4. Den Ordner `dist` in das Upload-Feld ziehen.
 5. „Deploy site“ wählen.
 
 Neue Fassung hochladen:
 
 1. Das Projekt öffnen.
 2. „Create a new deployment“ wählen, Umgebung „production“.
-3. Den neuen Ordner hochladen.
+3. Den neuen Ordner `dist` hochladen.
 
 Grenzen laut Cloudflare: höchstens 1000 Dateien, höchstens 25 MiB pro Datei. QUORMEL 1 liegt weit darunter. Die Bezeichnungen im Dashboard können sich ändern.
 
@@ -49,7 +40,7 @@ Grenzen laut Cloudflare: höchstens 1000 Dateien, höchstens 25 MiB pro Datei. Q
 
 1. Im Repository „Settings“ → „Pages“ öffnen.
 2. Unter „Source“ „Deploy from a branch“ wählen.
-3. Den Branch und den Ordner `/ (root)` auswählen, speichern.
+3. Den Branch und den Ordner `/ (root)` auswählen, speichern. (Im Hauptordner liegen dieselben Dateien wie in `dist/`, dazu Dokumentation und Tests.)
 4. Nach ein bis zwei Minuten ist die Seite unter `https://<benutzername>.github.io/Quormel1-openbeta/` erreichbar.
 
 Bei diesem Weg steht der GitHub-Benutzername in der Adresse.
@@ -59,10 +50,10 @@ Bei diesem Weg steht der GitHub-Benutzername in der Adresse.
 Der Offline-Speicher erkennt neue Fassungen an einer Kennung in `sw.js`. Nach jeder Änderung an `index.html`, `css/`, `js/`, `icons/` oder `manifest.webmanifest` einmal ausführen:
 
 ```
-node tools/update-sw.cjs
+node tools/build.cjs
 ```
 
-Danach hochladen. Ohne diesen Schritt bekommen Geräte, die die Seite schon kennen, die Änderung nicht.
+Das aktualisiert die Kennung und erzeugt `dist/` neu. Danach `dist` hochladen. Ohne diesen Schritt bekommen Geräte, die die Seite schon kennen, die Änderung nicht.
 
 ---
 
@@ -142,10 +133,10 @@ Was die App selbst zum Schutz tut, steht in [pwa-offline.md](pwa-offline.md).
 
 | Beobachtung | Ursache und Abhilfe |
 |---|---|
-| „Offline bereit“ erscheint nicht | Adresse beginnt nicht mit `https://`, oder der Browser ist im privaten Modus. `sw.js` liegt nicht auf der obersten Ebene neben `index.html`. |
+| „Offline bereit“ erscheint nicht | Adresse beginnt nicht mit `https://`, oder der Browser ist im privaten Modus. Es wurde nicht der Inhalt von `dist` hochgeladen, sodass `sw.js` nicht neben `index.html` liegt. |
 | Seite ist offline leer | Sie wurde auf diesem Gerät noch nie mit Internet geladen. Auf iPad/iPhone: die installierte App wurde noch nie mit Internet gestartet. |
-| Alte Fassung wird angezeigt | App schließen, mit Internet neu öffnen, auf der Startseite „Jetzt aktualisieren“ wählen. Wurde vor dem Hochladen `node tools/update-sw.cjs` ausgeführt? |
+| Alte Fassung wird angezeigt | App schließen, mit Internet neu öffnen, auf der Startseite „Jetzt aktualisieren“ wählen. Wurde vor dem Hochladen `node tools/build.cjs` ausgeführt? |
 | Kein Knopf „App installieren“ auf Android | App ist schon installiert, oder Chrome bietet es gerade nicht an. Weg über das Chrome-Menü nehmen. |
 | Trainingsstand fehlt | Anderes Gerät, andere Adresse oder App statt Safari (Abschnitt 5). |
 
-Die Schritte zur Installation beschreiben das übliche Vorgehen der Systeme. Sie wurden nicht auf echten Geräten durchgespielt; Menübezeichnungen können je nach Version abweichen.
+Die Schritte zur Installation beschreiben das übliche Vorgehen der Systeme. Sie wurden nicht auf echten Geräten durchgespielt; Menübezeichnungen können je nach Version abweichen. Was auf echten Geräten noch zu prüfen ist: [device-checklist.md](device-checklist.md).

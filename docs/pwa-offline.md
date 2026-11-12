@@ -1,6 +1,6 @@
 # QUORMEL 1 – PWA und Offline-Betrieb
 
-Stand: Phase 4 (11.11.2026). Die Schritt-für-Schritt-Anleitung für Nutzer steht in [publish-and-install.md](publish-and-install.md).
+Stand: Phase 5 (12.11.2026). Die Schritt-für-Schritt-Anleitung für Nutzer steht in [publish-and-install.md](publish-and-install.md).
 
 ## Bestandteile
 
@@ -34,7 +34,9 @@ Die Anwendung lädt keine fremden Ressourcen. Ohne Internet fehlt deshalb nichts
 
 So werden nie mitten in einer Sitzung alte und neue Dateien gemischt, und ein laufendes Training wird nie ungefragt unterbrochen. Läuft beim Aktualisieren ein Training, wird es vorher angehalten und gespeichert.
 
-**Nach jeder Änderung an Dateien der Anwendung:** `node tools/update-sw.cjs`. Der Test `tests/pwa.cjs` schlägt fehl, wenn das vergessen wurde.
+**Nach jeder Änderung an Dateien der Anwendung:** `node tools/build.cjs` (aktualisiert `sw.js` und `dist/`). Der Test `tests/pwa.cjs` schlägt fehl, wenn das vergessen wurde.
+
+**Weiterleitungen:** Manche Anbieter leiten `index.html` auf den Ordner weiter (Cloudflare Pages). Der Service Worker übernimmt den Inhalt solcher Antworten in eine neue Antwort, weil Browser weitergeleitete Antworten für Seitenaufrufe ablehnen.
 
 ## Installationshilfe
 
@@ -52,7 +54,7 @@ Neu in Phase 4:
 
 | Maßnahme | Wirkung |
 |---|---|
-| Speichern beim Verlassen | Geht die App in den Hintergrund oder wird sie geschlossen, wird ein laufendes oder pausiertes Training sofort gespeichert. Vorher konnten bis zu 49 Episoden seit dem letzten automatischen Speichern verloren gehen. |
+| Speichern beim Verlassen | Geht die App in den Hintergrund oder wird sie geschlossen, wird ein laufendes oder pausiertes Training sofort gespeichert. Vorher konnten bis zu 49 Episoden seit dem letzten automatischen Speichern verloren gehen. Ergibt das Speichern keinen gültigen Stand, bleibt der vorherige erhalten. |
 | Dauerhafter Speicher | Beim Start eines Trainings, beim Laden und beim Import bittet die App den Browser, die Daten nicht selbstständig zu löschen. Ob er zustimmt, entscheidet der Browser. Die Startseite zeigt das Ergebnis. |
 | Export in der installierten App (iPad/iPhone) | Der Export läuft dort über den Teilen-Dialog, weil Downloads in installierten Web-Apps unzuverlässig sind. Überall sonst bleibt es beim Download. |
 

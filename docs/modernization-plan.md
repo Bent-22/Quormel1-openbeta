@@ -1,6 +1,6 @@
 # QUORMEL 1 – Modernisierungsplan (Phase 1: Analyse und Architektur)
 
-Stand: 11.11.2026 · Branch: `feat/quormel-cross-platform-pwa` · Status: Phase 1 bis 4 abgeschlossen
+Stand: 11.11.2026 · Branch: `feat/quormel-cross-platform-pwa` · Status: alle fünf Phasen abgeschlossen (12.11.2026)
 
 Dieses Dokument ist die Grundlage für die Phasen 2 bis 5 und gibt den Stand der Analyse aus Phase 1 wieder. In Phase 1 wurde kein Anwendungscode verändert.
 

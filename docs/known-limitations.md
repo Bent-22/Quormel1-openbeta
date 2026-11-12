@@ -1,6 +1,10 @@
 # QUORMEL 1 – Bekannte Einschränkungen
 
-Stand: Phase 4 (11.11.2026)
+Stand: Phase 5 (12.11.2026) – Abschluss
+
+## Wichtigste Einschränkung
+
+**Kein echtes Gerät und kein anderer Browser als Chrome wurde getestet.** Safari auf iPad und iPhone, Firefox und alle realen Geräte sind ungeprüft. Was dort noch zu prüfen ist, steht in [device-checklist.md](device-checklist.md).
 
 ## Installation, Offline, Speicher (Phase 4)
 
@@ -10,7 +14,7 @@ Stand: Phase 4 (11.11.2026)
 - **Der Browser entscheidet über dauerhaften Speicher.** Lehnt er ab, kann er Daten bei Platzmangel oder langer Nichtnutzung löschen. Die Startseite zeigt, was gilt. Einzig sicher ist der Export als Datei.
 - **Speichern beim Verlassen ist nicht garantiert.** Beendet das System die App schlagartig, kann der letzte Schritt fehlen; dann gilt der letzte automatische Speicherstand.
 - **Privater Modus.** Dort gibt es in manchen Browsern keinen Offline-Betrieb, und Daten werden beim Schließen verworfen.
-- **`node tools/update-sw.cjs` nicht vergessen.** Ohne diesen Schritt nach Änderungen erhalten Geräte, die die Seite kennen, die neue Fassung nicht.
+- **`node tools/build.cjs` nicht vergessen.** Ohne diesen Schritt nach Änderungen erhalten Geräte, die die Seite kennen, die neue Fassung nicht, und `dist/` ist veraltet.
 - **Update-Hinweis nur auf der Startseite.** Wer nie zur Startseite zurückkehrt, sieht ihn nicht.
 - **Offline nur die Anwendung.** `docs/` und `legacy/` sind ohne Internet nicht erreichbar.
 
@@ -45,4 +49,6 @@ Stand: Phase 4 (11.11.2026)
 
 - Der Lernkern (`js/core/`) ruft direkt Oberflächen- und Speicherfunktionen auf.
 - Das ursprüngliche CSS enthält doppelte und ungenutzte Regeln; es wurde unverändert übernommen. Neue Regeln stehen im Block „Phase 3“.
-- Kein Build-System und keine Typprüfung.
+- Der Produktionsbuild kopiert die Dateien unverändert; es gibt keine Bündelung, keine Verkleinerung und keine Typprüfung.
+- Bei einem ungültigen Zahlenwert im Training legt die Anwendung wie die Originaldatei eine leere Zeile (fünf Nullen) für den Folgezustand an. Das ändert das Lernen nicht.
+- Fehlt beim Hochladen eine Datei, bemerkt man das nur am Fehlen von „Offline bereit“.

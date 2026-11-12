@@ -9,12 +9,16 @@
 //
 // VERSION und FILES werden von tools/update-sw.cjs gesetzt. Nach jeder Änderung an Dateien der Anwendung: node tools/update-sw.cjs
 /* BEGIN GENERATED */
-const VERSION="6527a86947b2";
+const VERSION="0d764c14c405";
 const FILES=["index.html","manifest.webmanifest","css/quormel.css","js/core/constants.js","js/core/qlearning.js","js/core/rng.js","js/core/track.js","js/input/touch-controls.js","js/main.js","js/pwa/register.js","js/render/fpv.js","js/render/hidpi.js","js/render/sim-view.js","js/state.js","js/storage/protect.js","js/storage/records.js","js/storage/save.js","js/ui/actions.js","js/ui/analysis.js","js/ui/dom.js","js/ui/duel.js","js/ui/editor.js","js/ui/explain.js","js/ui/home.js","js/ui/lab.js","js/ui/library.js","js/ui/pause-anim.js","js/ui/race.js","js/ui/replay.js","js/ui/sim.js","js/ui/wheel.js","icons/apple-touch-icon.png","icons/icon-192.png","icons/icon-512.png","icons/icon-maskable-512.png"];
 /* END GENERATED */
 const CACHE="quormel1-"+VERSION,BASE=new URL("./",self.location);
 
-self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES.map(f=>new Request(new URL(f,BASE),{cache:"reload"}))))));
+// Manche Anbieter leiten index.html auf den Ordner weiter (z. B. Cloudflare Pages). Eine weitergeleitete Antwort darf ein Service Worker
+// nicht für einen Seitenaufruf verwenden – deshalb wird ihr Inhalt in eine neue, saubere Antwort übernommen.
+const clean=async r=>r.redirected?new Response(await r.blob(),{status:r.status,statusText:r.statusText,headers:r.headers}):r;
+self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>Promise.all(FILES.map(async f=>{const u=new URL(f,BASE),r=await fetch(new Request(u,{cache:"reload"}));
+ if(!r.ok)throw new Error("Abruf fehlgeschlagen: "+f);await c.put(u,await clean(r))})))));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith("quormel1-")&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener("message",e=>{if(e.data==="skipWaiting")self.skipWaiting()});
 self.addEventListener("fetch",e=>{const rq=e.request;if(rq.method!=="GET")return;

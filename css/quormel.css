@@ -153,3 +153,10 @@ body.touch #race.on #tc{display:block}body.touch #drvT{display:block;margin-top:
 #pwa small{color:var(--m)}#pwa [hidden]{display:none}#pwa small:empty{display:none}
 #bInst{width:260px}
 #pwaUpd{background:var(--p);border:1px solid var(--a);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+
+/* ================= Phase 5: Korrekturen ================= */
+/* Rennergebnis: „Noch einmal“ und „Zurück“ gehören in die Ergebniskarte. Die Regel „#race .row“ (Kopfzeile) hatte sie
+   bisher an den oberen Bildschirmrand gesetzt, wo sie den Streckennamen verdeckten. */
+#rs .rc .row{position:static;justify-content:center;margin:16px 0 0;font-size:inherit}
+/* Hinweise dürfen Berührungen nicht abfangen (sie können über den Bildschirmtasten liegen) */
+body.touch #toast{pointer-events:none}

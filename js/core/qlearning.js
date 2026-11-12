@@ -1,5 +1,5 @@
 // QUORMEL 1 – Q-Learning-Kern: Sensoren, Zustand, Aktionswahl, Bewegung, Reward, Q-Update, Episodenende.
-// Unverändert aus der Originaldatei übernommen – nicht ohne Vergleichstest ändern (tests/golden.mjs).
+// Unverändert aus der Originaldatei übernommen – nicht ohne Vergleichstest ändern (tests/golden.cjs, tests/math.cjs).
 import {app} from "../state.js";
 import {$,toast} from "../ui/dom.js";
 import {ACT,H,TURN,V,W} from "./constants.js";

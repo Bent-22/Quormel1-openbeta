@@ -28,6 +28,7 @@ import * as actions from "./ui/actions.js";
 import * as touchControls from "./input/touch-controls.js";
 import * as protect from "./storage/protect.js";
 import * as pwa from "./pwa/register.js";
+import * as legal from "./ui/legal.js";
 
 export function loop(){requestAnimationFrame(loop);faTick();bvTick();
  if(app.page==="sim"){paTick();if(app.st==="training"){const n=+$("ps").value;for(let i=0;i<n&&app.st==="training";i++)trainStep()}
@@ -64,4 +65,5 @@ editor.init2();
 touchControls.init();
 protect.init();
 pwa.init();
+legal.init();
 requestAnimationFrame(loop);

@@ -3,7 +3,12 @@
   "private": true,
   "description": "QUORMEL 1 – ein Auto lernt mit Q-Learning, eine Rennstrecke zu fahren.",
   "scripts": {
-    "test": "node tests/golden.cjs && node tests/ui.cjs && node tests/devices.cjs && node tests/pwa.cjs",
+    "build": "node tools/build.cjs",
+    "test": "node tests/run-all.cjs",
+    "test:dist": "node tests/run-all.cjs --dist",
+    "test:math": "node tests/math.cjs",
+    "test:regress": "node tests/regress.cjs",
+    "test:retina": "node tests/retina.cjs",
     "test:golden": "node tests/golden.cjs",
     "test:ui": "node tests/ui.cjs",
     "test:devices": "node tests/devices.cjs",

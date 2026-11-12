@@ -79,7 +79,12 @@ async function runProfile(browser, base, name, opts, ref) {
     ok("Bildschirmtasten ausgeblendet", !race.shown); ok("Strecke nutzt das ganze Fenster", Math.abs(race.sc - Math.min(race.cw / 1000, race.ch / 640)) < 1e-9, race.sc.toFixed(3));
     await p.click("#rGo"); await wait(p, 3100); await p.keyboard.down("ArrowUp"); await wait(p, 300); const v = await p.evaluate(() => { const R = window.__q.get("R"); return [R.go, R.steps > 0] }); await p.keyboard.up("ArrowUp"); ok("Tastatur: Rennen startet mit Pfeil nach oben", v[0] && v[1], v.join());
   }
-  await p.click("#race > button"); await p.click("#sim .row > button:first-child");
+  // Rennergebnis: Schaltflächen liegen in der Ergebniskarte, sind sichtbar und nicht verdeckt
+  await p.evaluate(() => window.__q.f.endRace(false)); await wait(p, 500);
+  const res = await p.evaluate(() => { const c = document.querySelector("#rs .rc").getBoundingClientRect(); return [...document.querySelectorAll("#rs button")].map(b => { const r = b.getBoundingClientRect(), e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return { t: b.textContent, inCard: r.left >= c.left && r.right <= c.right && r.top >= c.top && r.bottom <= c.bottom, onScreen: r.top >= 0 && r.bottom <= innerHeight && r.left >= 0 && r.right <= innerWidth, free: e === b } }) });
+  ok("Rennergebnis: „Noch einmal“ und „Zurück“ in der Karte, im Bild und bedienbar", res.length === 2 && res.every(b => b.inCard && b.onScreen && b.free), JSON.stringify(res));
+  await p.click("#rs button:has-text('Zurück')"); ok("Rennergebnis: „Zurück“ führt zur Trainingsansicht", await p.evaluate(() => window.__q.get("page")) === "sim");
+  await p.click("#sim .row > button:first-child");
 
   // Editor
   await p.click("#drawblk"); await frames(p); const W = await p.evaluate(() => innerWidth), H = await p.evaluate(() => innerHeight), path = n => { const o = []; for (let i = 0; i <= n; i++) { const t = i / n; o.push([W * (.16 + .68 * t), H * (.72 - .3 * Math.sin(t * Math.PI))]) } return o }, pts = path(40);

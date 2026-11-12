@@ -1,21 +1,24 @@
 // Gemeinsame Hilfen für die Tests: statischer Server, Browserstart, einheitlicher Zugriff auf Original und Neufassung.
 const http = require("http"), fs = require("fs"), path = require("path"), crypto = require("crypto");
 const { chromium } = require("playwright");
-const ROOT = path.resolve(__dirname, "..");
+// REPO: Projektordner · ROOT: Ordner, dessen Anwendung geprüft wird (Standard: Projektordner; mit QUORMEL_ROOT=dist der Produktionsbuild)
+const REPO = path.resolve(__dirname, ".."), ROOT = process.env.QUORMEL_ROOT ? path.resolve(REPO, process.env.QUORMEL_ROOT) : REPO;
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json", ".webmanifest": "application/manifest+json", ".png": "image/png", ".svg": "image/svg+xml" };
 const LEGACY = "/legacy/Quormel1_Finalcode.html", NEW = "/index.html";
 
 // state.down = true: Server antwortet nicht mehr (Netzausfall) · state.over[pfad] = Inhalt: liefert stattdessen diesen Inhalt (neue Fassung)
 function serve() {
   return new Promise(res => {
-    const state = { down: false, over: {} };
+    const state = { down: false, over: {}, redirectIndex: false };
     const srv = http.createServer((rq, rs) => {
       let p = decodeURIComponent(rq.url.split("?")[0]); if (p.endsWith("/")) p += "index.html";
       if (state.down) { rs.destroy(); return }
       if (p.startsWith("/unterordner/")) p = p.slice(12); // dieselbe Seite unter einer Unteradresse (wie bei GitHub Pages)
+      // state.redirectIndex: /index.html wird auf den Ordner weitergeleitet (so verhält sich Cloudflare Pages)
+      if (state.redirectIndex && rq.url.split("?")[0].endsWith("/index.html")) { rs.writeHead(308, { location: "./" }); rs.end(); return }
       if (p in state.over) { rs.writeHead(200, { "content-type": MIME[path.extname(p)] || "application/octet-stream", "cache-control": "no-store" }); rs.end(state.over[p]); return }
-      const f = path.join(ROOT, p);
-      if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rs.writeHead(404); rs.end("404"); return }
+      const base = p.startsWith("/legacy/") ? REPO : ROOT, f = path.join(base, p); // die Originaldatei liegt immer im Projektordner
+      if (!f.startsWith(base) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rs.writeHead(404); rs.end("404"); return }
       rs.writeHead(200, { "content-type": MIME[path.extname(f)] || "application/octet-stream", "cache-control": "no-store" }); fs.createReadStream(f).pipe(rs);
     }).listen(0, "127.0.0.1", () => res({ url: "http://127.0.0.1:" + srv.address().port, close: () => srv.close(), state }));
   });
@@ -59,4 +62,4 @@ function report(title, log) {
   for (const l of log) console.log((l.ok ? "  ok   " : "  FEHL ") + l.name + (l.ok ? "  [" + l.info + "]" : "\n   " + l.info));
   return bad.length === 0;
 }
-module.exports = { serve, launch, open, same, report, sha, ROOT };
+module.exports = { serve, launch, open, same, report, sha, ROOT, REPO };

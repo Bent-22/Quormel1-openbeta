@@ -1,7 +1,7 @@
 // PWA-Test: Manifest, Icons, Service Worker, Offline-Betrieb, Update ohne Datenverlust, Installationshilfe, Schutz der Trainingsstände.
 // Hinweis: Es läuft die Chrome-Engine. Das Installieren selbst (Home-Bildschirm) lässt sich nicht automatisch prüfen.
 const fs = require("fs"), path = require("path"), { execFileSync } = require("child_process");
-const { serve, launch, open, report, ROOT } = require("./helpers.cjs");
+const { serve, launch, open, report, ROOT, REPO } = require("./helpers.cjs");
 const log = [], ok = (n, c, info) => log.push({ name: n, ok: !!c, info: c ? (info === undefined ? "ok" : String(info)) : String(info) });
 const trainTo = (p, n) => p.evaluate(n => { const q = window.__q; while (q.get("st") === "training" && q.get("epN") < n) q.f.trainStep() }, n);
 const swInfo = p => p.evaluate(async () => { const ks = await caches.keys(), n = ks.length ? (await (await caches.open(ks[0])).keys()).length : 0; return { ctl: !!navigator.serviceWorker.controller, keys: ks, n, state: document.querySelector("#pwaState").textContent } });
@@ -10,8 +10,10 @@ const saved = p => p.evaluate(() => { try { return JSON.parse(localStorage.getIt
 (async () => {
   const srv = await serve(), browser = await launch();
   // ---------- 1) Dateien ----------
-  let fresh = true; try { execFileSync(process.execPath, [path.join(ROOT, "tools/update-sw.cjs"), "--check"], { stdio: "pipe" }) } catch (e) { fresh = false }
-  ok("sw.js enthält die aktuelle Dateiliste und Versionskennung", fresh, "bitte ausführen: node tools/update-sw.cjs");
+  const tool = (name) => { try { execFileSync(process.execPath, [path.join(REPO, "tools", name), "--check"], { stdio: "pipe" }); return true } catch (e) { return false } };
+  const swOk = tool("update-sw.cjs"), distOk = tool("build.cjs");
+  ok("sw.js enthält die aktuelle Dateiliste und Versionskennung", swOk, swOk ? undefined : "bitte ausführen: node tools/update-sw.cjs");
+  ok("Produktionsbuild dist/ entspricht dem aktuellen Stand", distOk, distOk ? undefined : "bitte ausführen: node tools/build.cjs");
   const sw = fs.readFileSync(path.join(ROOT, "sw.js"), "utf8"), FILES = JSON.parse(sw.match(/const FILES=(\[.*?\]);/)[1]), VERSION = sw.match(/const VERSION="(.*?)"/)[1];
   ok("alle Dateien der Liste existieren", FILES.every(f => fs.existsSync(path.join(ROOT, f))), FILES.length + " Dateien");
   const man = JSON.parse(fs.readFileSync(path.join(ROOT, "manifest.webmanifest"), "utf8"));
@@ -86,6 +88,18 @@ const saved = p => p.evaluate(() => { try { return JSON.parse(localStorage.getIt
     ok("Browser meldet keine Hindernisse für die Installation", inst.length === 0, inst.join());
     srv.state.down = true; await D.setOffline(true); bad.length = 0; await d.goto(srv.url + "/unterordner/"); await d.waitForFunction(() => document.querySelectorAll("#cards .card").length === 3);
     ok("Unter einer Unteradresse: Cache und Offline-Start funktionieren", urls.length === FILES.length && urls.every(u => u.startsWith("/unterordner/")) && bad.length === 0, bad.slice(0, 2).join(" | ")); srv.state.down = false; await D.close() }
+
+  // ---------- 9) Hosting, das /index.html auf den Ordner weiterleitet (Cloudflare Pages) ----------
+  { srv.state.redirectIndex = true; const E = await browser.newContext({ viewport: { width: 1280, height: 800 } }), e = await E.newPage(), bad = []; e.on("pageerror", x => bad.push(String(x)));
+    await e.goto(srv.url + "/"); await e.waitForFunction(() => /Offline bereit/.test(document.querySelector("#pwaState").textContent), null, { timeout: 15000 }).catch(() => bad.push("Offline-Cache wurde nicht fertig")); await e.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 5000 }).catch(() => 0);
+    const reload = async () => { try { const r = await e.goto(srv.url + "/", { timeout: 8000 }); await e.waitForFunction(() => document.querySelectorAll("#cards .card").length === 3, null, { timeout: 5000 }); return r.status() } catch (x) { return String(x).split("\n")[0].slice(0, 90) } };
+    const online = await reload(); srv.state.down = true; await E.setOffline(true); const offline = await reload(); srv.state.down = false; srv.state.redirectIndex = false;
+    ok("Weiterleitung von index.html (Cloudflare Pages): zweiter Aufruf und Offline-Start funktionieren", online === 200 && offline === 200 && bad.length === 0, `online: ${online} · offline: ${offline} ${bad.join(" | ")}`); await E.close() }
+
+  // ---------- 10) Speichern beim Verlassen darf einen gültigen Stand nie durch einen ungültigen ersetzen ----------
+  { const F = await open(browser, srv.url, "new"), f = F.page; await f.click("#home .nav button.pri"); await f.click("#cards .card:nth-child(1) button"); await f.evaluate(() => { window.__q.seed(5); document.querySelector("#pn").value = "100" }); await f.click("#bGo");
+    const r = await f.evaluate(() => { const q = window.__q; while (q.get("epN") < 50) q.f.trainStep(); const good = localStorage.getItem("q1save"); q.get("P").rp = NaN; q.f.trainStep(); const st = q.get("st"); window.dispatchEvent(new Event("pagehide")); const after = localStorage.getItem("q1save"); return { st, kept: after === good, valid: q.f.hasValidSave(), btn: !document.querySelector("#bCont").disabled } });
+    ok("Nach einem Trainingsabbruch mit ungültigen Werten bleibt der letzte gültige Stand beim Verlassen erhalten", r.st === "paused" && r.kept && r.valid && r.btn, JSON.stringify(r)); await F.ctx.close() }
 
   const good = report("PWA-Test", log); await browser.close(); srv.close(); process.exit(good ? 0 : 1);
 })().catch(e => { console.error(e); process.exit(2) });
